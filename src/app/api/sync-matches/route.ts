@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
@@ -68,10 +69,10 @@ export async function GET(request: NextRequest) {
       // Realistic odds based on FIFA ranks (lower rank = better)
       const homeRank = getRank(homeName)
       const awayRank = getRank(awayName)
-      
+
       // Calculate probability based on rank difference
       const rankDiff = awayRank - homeRank // Positive means home is better
-      
+
       let oddsHome = Math.max(1.05, 2.8 - (rankDiff * 0.02)).toFixed(2)
       let oddsAway = Math.max(1.05, 2.8 + (rankDiff * 0.02)).toFixed(2)
       let oddsDraw = Math.max(2.0, 3.5 - (Math.abs(rankDiff) * 0.01)).toFixed(2)
@@ -118,7 +119,7 @@ export async function GET(request: NextRequest) {
     // ----------------------------------------------------
     console.log("Running scoring engine...")
     const scoreStatus = process.env.TEST_SCORING === 'true' ? ['FINISHED', 'TIMED'] : ['FINISHED']
-    
+
     // 1. Fetch matches that are finished
     const { data: finishedMatches } = await supabaseAdmin
       .from('matches')
@@ -131,8 +132,15 @@ export async function GET(request: NextRequest) {
         if (fm.home_score === null || fm.away_score === null) {
           // If testing with TIMED, mock some scores
           if (process.env.TEST_SCORING === 'true') {
-            fm.home_score = Math.floor(Math.random() * 4)
-            fm.away_score = Math.floor(Math.random() * 4)
+            if (fm.id === 537327) {
+              fm.home_score = 1
+              fm.away_score = 1
+            } else if (fm.id === 537328) {
+              fm.home_score = 1
+              fm.away_score = 0
+            } else {
+              continue
+            }
           } else {
             continue
           }
@@ -153,11 +161,11 @@ export async function GET(request: NextRequest) {
           const aa = fm.away_score
 
           let basePoints = 0
-          
+
           // Exact Score
           if (ph === ah && pa === aa) {
             basePoints = 10
-          } 
+          }
           // Correct Outcome
           else if ((ph > pa && ah > aa) || (ph < pa && ah < aa) || (ph === pa && ah === aa)) {
             basePoints = 5
@@ -184,24 +192,26 @@ export async function GET(request: NextRequest) {
       const { data: allPredictions } = await supabaseAdmin
         .from('predictions')
         .select('room_id, user_id, points_earned')
-      
+
       if (allPredictions) {
         const pointsMap = new Map<string, number>()
         for (const p of allPredictions) {
-           const key = `${p.room_id}_${p.user_id}`
-           pointsMap.set(key, (pointsMap.get(key) || 0) + p.points_earned)
+          const key = `${p.room_id}_${p.user_id}`
+          pointsMap.set(key, (pointsMap.get(key) || 0) + p.points_earned)
         }
 
         for (const [key, totalPoints] of pointsMap.entries()) {
-           const [roomId, userId] = key.split('_')
-           await supabaseAdmin.from('room_members')
-             .update({ total_points: parseFloat(totalPoints.toFixed(2)) })
-             .eq('room_id', roomId)
-             .eq('user_id', userId)
+          const [roomId, userId] = key.split('_')
+          await supabaseAdmin.from('room_members')
+            .update({ total_points: parseFloat(totalPoints.toFixed(2)) })
+            .eq('room_id', roomId)
+            .eq('user_id', userId)
         }
       }
     }
 
+    revalidatePath('/', 'layout')
+    
     return NextResponse.json({ success: true, count: updatedCount, message: 'Sync and scoring completed' })
 
   } catch (error: any) {
