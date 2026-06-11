@@ -4,6 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 import fs from 'fs'
 import path from 'path'
 
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
 export async function GET(request: NextRequest) {
   // 1. Secure endpoint via Vercel Cron authentication
   if (process.env.CRON_SECRET) {
