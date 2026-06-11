@@ -110,7 +110,8 @@ export async function joinRoomById(formData: FormData) {
     .insert({ room_id: roomId, user_id: user.id })
 
   if (joinError && joinError.code !== '23505') {
-    return { error: 'Failed to join room' }
+    console.error('Error joining room by ID', joinError)
+    redirect('/dashboard?error=Failed+to+join+room')
   }
 
   revalidatePath('/dashboard')
