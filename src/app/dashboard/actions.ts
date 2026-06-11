@@ -69,7 +69,7 @@ export async function joinRoom(formData: FormData) {
   }
 
   revalidatePath('/dashboard')
-  redirect(`/room/${room.id}`)
+  redirect(`/room/${room.id}?welcome=true`)
 }
 
 export async function leaveRoom(formData: FormData) {
@@ -92,4 +92,5 @@ export async function leaveRoom(formData: FormData) {
   }
 
   revalidatePath('/dashboard')
+  redirect('/dashboard')
 }

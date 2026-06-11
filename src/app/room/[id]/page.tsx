@@ -5,11 +5,14 @@ import MatchList from '@/components/MatchList'
 import LeaveRoomButton from '@/components/LeaveRoomButton'
 
 export default async function RoomPage({
-  params
+  params,
+  searchParams
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>,
+  searchParams?: Promise<{ welcome?: string }>
 }) {
   const resolvedParams = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
   const roomId = resolvedParams.id;
   const supabase = await createClient()
 
@@ -70,6 +73,15 @@ export default async function RoomPage({
 
   return (
     <main className="container" style={{ padding: '4rem 2rem' }}>
+      {resolvedSearchParams?.welcome === 'true' && (
+        <div style={{ padding: '1rem 1.5rem', background: 'rgba(163, 193, 56, 0.1)', border: '1px solid var(--color-wimbledon-lime)', borderRadius: 'var(--radius-md)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'fadeIn 0.5s ease-out' }}>
+          <span style={{ fontSize: '1.5rem' }}>🎉</span>
+          <div>
+            <h3 style={{ color: 'var(--color-wimbledon-lime)', marginBottom: '0.25rem' }}>Welcome to {room.name}!</h3>
+            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>You've successfully joined the room. Submit your predictions before kickoff!</p>
+          </div>
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <Link href="/dashboard" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'inline-block' }}>
