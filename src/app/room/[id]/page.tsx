@@ -87,10 +87,10 @@ export default async function RoomPage({
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
         
         {/* Leaderboard */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
+        <div className="glass-panel" style={{ padding: '2rem', position: 'sticky', top: '2rem', maxHeight: 'calc(100vh - 4rem)', overflowY: 'auto' }}>
           <h2 style={{ marginBottom: '1.5rem', color: 'var(--color-wimbledon-lime)' }}>Leaderboard</h2>
           
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
