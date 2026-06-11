@@ -4,7 +4,7 @@ import Link from 'next/link'
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ message: string }>
+  searchParams: Promise<{ message?: string, redirect?: string }>
 }) {
   const resolvedSearchParams = await searchParams;
   return (
@@ -13,6 +13,7 @@ export default async function LoginPage({
         <h2 style={{ textAlign: 'center', marginBottom: '2rem' }} className="text-solid">Welcome</h2>
         
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <input type="hidden" name="redirect_to" value={resolvedSearchParams?.redirect || '/dashboard'} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="username" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Username</label>
             <input 

@@ -94,3 +94,25 @@ export async function leaveRoom(formData: FormData) {
   revalidatePath('/dashboard')
   redirect('/dashboard')
 }
+
+export async function joinRoomById(formData: FormData) {
+  const supabase = await createClient()
+  const roomId = formData.get('roomId') as string
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Add user to room members
+  const { error: joinError } = await supabase
+    .from('room_members')
+    .insert({ room_id: roomId, user_id: user.id })
+
+  if (joinError && joinError.code !== '23505') {
+    return { error: 'Failed to join room' }
+  }
+
+  revalidatePath('/dashboard')
+  redirect(`/room/${roomId}?welcome=true`)
+}

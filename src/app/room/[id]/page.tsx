@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import MatchList from '@/components/MatchList'
 import LeaveRoomButton from '@/components/LeaveRoomButton'
+import { joinRoomById } from '@/app/dashboard/actions'
 
 export default async function RoomPage({
   params,
@@ -16,10 +17,38 @@ export default async function RoomPage({
   const roomId = resolvedParams.id;
   const supabase = await createClient()
 
+  // Fetch room details first so we can display its name in the welcome screens
+  const { data: room, error: roomError } = await supabase
+    .from('rooms')
+    .select('*')
+    .eq('id', roomId)
+    .single()
+
+  if (roomError || !room) {
+    return <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>Room not found.</div>
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    return (
+      <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+          <h2 style={{ marginBottom: '1rem', fontSize: '2.5rem' }} className="text-solid">You're Invited!</h2>
+          <p style={{ color: 'var(--color-text-primary)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
+            You've been invited to join the <strong>{room.name}</strong> prediction room.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+            <Link href={`/login?redirect=/room/${roomId}`} className="btn btn-primary" style={{ width: '100%', maxWidth: '300px', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+              Log in to my account
+            </Link>
+            <Link href={`/signup?redirect=/room/${roomId}`} className="btn btn-purple" style={{ width: '100%', maxWidth: '300px', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+              Create a new account
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // Check if user is a member of this room
@@ -32,24 +61,24 @@ export default async function RoomPage({
 
   if (membershipError || !membership) {
     return (
-      <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
-        <h2 className="text-solid" style={{ marginBottom: '1rem', color: '#ff4d4d' }}>Access Denied</h2>
-        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>You must join this room using its invite code before you can view it.</p>
-        <Link href="/dashboard" className="btn btn-primary">Go to Dashboard</Link>
+      <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+          <h2 style={{ marginBottom: '1rem', fontSize: '2.5rem' }} className="text-solid">Join Room</h2>
+          <p style={{ color: 'var(--color-text-primary)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
+            You're authenticated and ready! Click below to officially join <strong>{room.name}</strong> and make your predictions.
+          </p>
+          
+          <form action={joinRoomById}>
+            <input type="hidden" name="roomId" value={roomId} />
+            <button type="submit" className="btn btn-purple" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem', borderRadius: 'var(--radius-md)' }}>
+              Join Room Now
+            </button>
+          </form>
+        </div>
       </div>
     )
   }
 
-  // Fetch room details
-  const { data: room, error: roomError } = await supabase
-    .from('rooms')
-    .select('*')
-    .eq('id', roomId)
-    .single()
-
-  if (roomError || !room) {
-    return <div className="container" style={{ padding: '4rem 2rem' }}>Room not found.</div>
-  }
 
   // Fetch leaderboard
   const { data: members } = await supabase

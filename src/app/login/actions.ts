@@ -19,8 +19,10 @@ export async function login(formData: FormData) {
     redirect('/login?message=Could not authenticate user')
   }
 
-  revalidatePath('/dashboard', 'layout')
-  redirect('/dashboard')
+  const redirectTo = formData.get('redirect_to') as string || '/dashboard'
+  
+  revalidatePath(redirectTo, 'layout')
+  redirect(redirectTo)
 }
 
 

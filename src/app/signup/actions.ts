@@ -19,6 +19,8 @@ export async function signup(formData: FormData) {
     redirect('/signup?message=Could not create user')
   }
 
-  revalidatePath('/dashboard', 'layout')
-  redirect('/dashboard')
+  const redirectTo = formData.get('redirect_to') as string || '/dashboard'
+
+  revalidatePath(redirectTo, 'layout')
+  redirect(redirectTo)
 }
