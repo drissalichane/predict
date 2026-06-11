@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createRoom, joinRoom } from './actions'
+import LeaveRoomButton from '@/components/LeaveRoomButton'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -39,9 +40,12 @@ export default async function DashboardPage() {
                       <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-wimbledon-lime)' }}>{rm.rooms?.name}</h3>
                       <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Invite Code: <span style={{ letterSpacing: '1px', color: 'white' }}>{rm.rooms?.invite_code}</span></p>
                     </div>
-                    <Link href={`/room/${rm.rooms?.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', textDecoration: 'none' }}>
-                      Enter
-                    </Link>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <Link href={`/room/${rm.rooms?.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', textDecoration: 'none' }}>
+                        Enter
+                      </Link>
+                      <LeaveRoomButton roomId={rm.rooms?.id} iconOnly={true} />
+                    </div>
                   </div>
                 </li>
               ))}

@@ -28,7 +28,17 @@ export default async function Navbar() {
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
         {user ? (
           <>
-            <span style={{ color: 'var(--color-wimbledon-lime)', fontWeight: 'bold', marginRight: '1rem' }}>{displayName}</span>
+            <span style={{ 
+              color: 'var(--color-surface)', 
+              background: 'var(--color-wimbledon-lime)', 
+              fontWeight: 'bold', 
+              padding: '0.25rem 0.75rem', 
+              borderRadius: 'var(--radius-md)', 
+              marginRight: '1rem',
+              fontSize: '0.85rem'
+            }}>
+              {displayName}
+            </span>
             <Link href="/dashboard" style={{ fontSize: '0.9rem' }}>Dashboard</Link>
             <form action={signOut}>
               <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>Sign Out</button>

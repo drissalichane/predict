@@ -71,3 +71,25 @@ export async function joinRoom(formData: FormData) {
   revalidatePath('/dashboard')
   redirect(`/room/${room.id}`)
 }
+
+export async function leaveRoom(formData: FormData) {
+  const supabase = await createClient()
+  const roomId = formData.get('roomId') as string
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  const { error } = await supabase
+    .from('room_members')
+    .delete()
+    .match({ room_id: roomId, user_id: user.id })
+
+  if (error) {
+    console.error('Error leaving room', error)
+    return { error: 'Failed to leave room' }
+  }
+
+  revalidatePath('/dashboard')
+}

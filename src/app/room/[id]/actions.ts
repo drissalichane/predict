@@ -16,7 +16,21 @@ export async function submitPrediction(formData: FormData) {
   }
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Not authenticated' }
+  if (!user) {
+    return { error: 'Not authenticated' }
+  }
+
+  // Security: Check if user is actually a member of this room
+  const { data: membership } = await supabase
+    .from('room_members')
+    .select('user_id')
+    .eq('room_id', roomId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!membership) {
+    return { error: 'Access denied: not a member of this room' }
+  }
 
   // Check if match has already started
   const { data: match } = await supabase

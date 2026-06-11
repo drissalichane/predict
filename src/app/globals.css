@@ -163,3 +163,15 @@ h1 {
   background: #3c1c63;
   box-shadow: 0 6px 20px rgba(79, 38, 131, 0.4);
 }
+
+.btn-danger {
+  background: #b52a2a;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(181, 42, 42, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  background: #992323;
+  box-shadow: 0 6px 20px rgba(181, 42, 42, 0.4);
+}

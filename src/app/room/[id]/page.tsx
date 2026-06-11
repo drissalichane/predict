@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import MatchList from '@/components/MatchList'
+import LeaveRoomButton from '@/components/LeaveRoomButton'
 
 export default async function RoomPage({
   params
@@ -16,6 +17,24 @@ export default async function RoomPage({
 
   if (!user) {
     redirect('/login')
+  }
+
+  // Check if user is a member of this room
+  const { data: membership, error: membershipError } = await supabase
+    .from('room_members')
+    .select('user_id')
+    .eq('room_id', roomId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (membershipError || !membership) {
+    return (
+      <div className="container" style={{ padding: '4rem 2rem', textAlign: 'center' }}>
+        <h2 className="text-solid" style={{ marginBottom: '1rem', color: '#ff4d4d' }}>Access Denied</h2>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>You must join this room using its invite code before you can view it.</p>
+        <Link href="/dashboard" className="btn btn-primary">Go to Dashboard</Link>
+      </div>
+    )
   }
 
   // Fetch room details
@@ -59,9 +78,12 @@ export default async function RoomPage({
           <h1 className="text-solid">{room.name}</h1>
         </div>
         
-        <div className="bg-surface" style={{ padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-          <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>Invite Code</p>
-          <p style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '2px', color: 'var(--color-wimbledon-lime)' }}>{room.invite_code}</p>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div className="bg-surface" style={{ padding: '1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem' }}>Invite Code</p>
+            <p style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '2px', color: 'var(--color-wimbledon-lime)' }}>{room.invite_code}</p>
+          </div>
+          <LeaveRoomButton roomId={roomId} />
         </div>
       </div>
 

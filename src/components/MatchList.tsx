@@ -54,11 +54,9 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   const predMap: Record<string, Prediction> = {}
   initialPredictions.forEach(p => { predMap[p.match_id] = p })
 
-  // Current time state to avoid impure Date.now() during render
-  const [currentTime, setCurrentTime] = useState<number | null>(null)
-  useEffect(() => {
-    setCurrentTime(Date.now())
-  }, [])
+  // Track hydration to avoid Date mismatch during SSR
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
 
   return (
     <div className="bg-surface" style={{ padding: '2rem', borderRadius: 'var(--radius-lg)' }}>
@@ -93,7 +91,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filteredMatches.map((match: Match) => {
             const prediction = predMap[match.id]
-            const hasStarted = currentTime !== null ? new Date(match.kickoff_time).getTime() <= currentTime : false
+            const hasStarted = isMounted ? new Date(match.kickoff_time).getTime() <= Date.now() : false
             const isEditing = editMode[match.id] || !prediction
             
             return (
@@ -149,7 +147,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                         type="button" 
                         className="btn btn-outline" 
                         style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
-                        onClick={() => setEditMode(prev => ({ ...prev, [match.id]: true }))}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setEditMode(prev => ({ ...prev, [match.id]: true }))
+                        }}
                       >
                         Update
                       </button>
