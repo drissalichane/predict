@@ -7,25 +7,27 @@
   --color-wimbledon-purple: #4f2683;
   --color-wimbledon-wood: #8b5a2b;
   --color-wimbledon-wood-light: #c19a6b;
-  
-  --color-background: #0d1b11; /* Dark greenish black */
-  --color-surface: #132719;    /* Slightly lighter dark green */
+
+  --color-background: #0d1b11;
+  /* Dark greenish black */
+  --color-surface: #132719;
+  /* Slightly lighter dark green */
   --color-surface-hover: #1e3b26;
-  
+
   --color-text-primary: #e6f0e9;
   --color-text-secondary: #9cb1a2;
   --color-text-accent: #a3c138;
-  
+
   --color-border: #23462d;
 
   --font-heading: 'Playfair Display', serif;
   --font-body: 'Inter', sans-serif;
-  
+
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
   --radius-pill: 9999px;
-  
+
   --shadow-glow: 0 4px 20px rgba(163, 193, 56, 0.15);
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
@@ -58,7 +60,12 @@ a:hover {
   color: var(--color-wimbledon-lime);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 600;
   line-height: 1.2;
@@ -103,6 +110,7 @@ h1 {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
 }
+
 
 /* Micro-animations */
 .hover-lift {
