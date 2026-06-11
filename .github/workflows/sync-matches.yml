@@ -1,0 +1,14 @@
+name: Hourly Match Sync
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs exactly at minute 0 of every hour
+  workflow_dispatch: # Allows you to manually click "Run" from GitHub UI if you ever want to force it
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Sync API
+        run: |
+          curl -X GET "${{ secrets.PRODUCTION_URL }}/api/sync-matches" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
