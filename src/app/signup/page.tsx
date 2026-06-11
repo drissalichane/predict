@@ -11,16 +11,16 @@ export default async function SignupPage({
     <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
         <h2 style={{ textAlign: 'center', marginBottom: '2rem' }} className="text-solid">Create Account</h2>
-        
+
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <input type="hidden" name="redirect_to" value={resolvedSearchParams?.redirect || '/dashboard'} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="username" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Username</label>
-            <input 
-              id="username" 
-              name="username" 
-              type="text" 
-              required 
+            <input
+              id="username"
+              name="username"
+              type="text"
+              required
               style={{
                 padding: '0.75rem',
                 borderRadius: 'var(--radius-md)',
@@ -28,17 +28,19 @@ export default async function SignupPage({
                 border: '1px solid var(--color-border)',
                 color: 'var(--color-text-primary)',
                 fontFamily: 'inherit'
-              }} 
+              }}
             />
           </div>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="password" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Password</label>
-            <input 
-              id="password" 
-              name="password" 
-              type="password" 
-              required 
+            <label htmlFor="password" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+              Password <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>(At least 6 characters, e.g. 123456)</span>
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
               style={{
                 padding: '0.75rem',
                 borderRadius: 'var(--radius-md)',
@@ -46,14 +48,14 @@ export default async function SignupPage({
                 border: '1px solid var(--color-border)',
                 color: 'var(--color-text-primary)',
                 fontFamily: 'inherit'
-              }} 
+              }}
             />
           </div>
-          
+
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
             <button formAction={signup} className="btn btn-primary">Sign Up</button>
           </div>
-          
+
           <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
             Already have an account? <Link href="/login" className="text-solid" style={{ textDecoration: 'underline' }}>Sign In</Link>
           </p>
