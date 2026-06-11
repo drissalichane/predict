@@ -14,11 +14,11 @@ export default async function LoginPage({
         
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="email" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Email</label>
+            <label htmlFor="username" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Username</label>
             <input 
-              id="email" 
-              name="email" 
-              type="email" 
+              id="username" 
+              name="username" 
+              type="text" 
               required 
               style={{
                 padding: '0.75rem',

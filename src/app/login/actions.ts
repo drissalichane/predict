@@ -7,10 +7,9 @@ import { createClient } from '@/utils/supabase/server'
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
+  const username = formData.get('username') as string
   const data = {
-    email: formData.get('email') as string,
+    email: `${username.toLowerCase()}@predict.local`,
     password: formData.get('password') as string,
   }
 

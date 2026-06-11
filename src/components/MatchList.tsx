@@ -7,7 +7,7 @@ type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: n
 type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
 
 export default function MatchList({ matches, initialPredictions, roomId }: { matches: Match[], initialPredictions: Prediction[], roomId: string }) {
-  const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('day')
+  const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('round')
   
   const getStage = (dateString: string) => {
     // Subtract 6 hours to convert UTC to approx US ET so late matches fall on the correct day
@@ -32,7 +32,9 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   }
 
   const days = Array.from(new Set(matches.map(m => formatDay(m.kickoff_time)))).sort((a,b) => new Date(a).getTime() - new Date(b).getTime())
-  const rounds = Array.from(new Set(matches.map(m => getStage(m.kickoff_time)))).sort()
+  const roundOrder = ['Group Stage', 'Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals', 'Third-Place Match', 'Final']
+  const rounds = Array.from(new Set(matches.map(m => getStage(m.kickoff_time))))
+    .sort((a, b) => roundOrder.indexOf(a) - roundOrder.indexOf(b))
   
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
   const [selectedRound, setSelectedRound] = useState(rounds[0] || '')

@@ -6,6 +6,12 @@ export default async function Navbar() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  let displayName = null
+  if (user) {
+    const { data: dbUser } = await supabase.from('users').select('display_name').eq('id', user.id).single()
+    if (dbUser) displayName = dbUser.display_name
+  }
+
   async function signOut() {
     'use server'
     const supabaseServer = await createClient()
@@ -22,6 +28,7 @@ export default async function Navbar() {
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
         {user ? (
           <>
+            <span style={{ color: 'var(--color-wimbledon-lime)', fontWeight: 'bold', marginRight: '1rem' }}>{displayName}</span>
             <Link href="/dashboard" style={{ fontSize: '0.9rem' }}>Dashboard</Link>
             <form action={signOut}>
               <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>Sign Out</button>

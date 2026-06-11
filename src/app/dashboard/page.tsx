@@ -33,13 +33,13 @@ export default async function DashboardPage() {
           ) : (
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {memberships.map((rm: any) => (
-                <li key={rm.room_id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                <li key={rm.rooms?.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <h3 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-wimbledon-lime)' }}>{rm.rooms?.name}</h3>
                       <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>Invite Code: <span style={{ letterSpacing: '1px', color: 'white' }}>{rm.rooms?.invite_code}</span></p>
                     </div>
-                    <Link href={`/room/${rm.room_id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', textDecoration: 'none' }}>
+                    <Link href={`/room/${rm.rooms?.id}`} className="btn btn-primary" style={{ padding: '0.5rem 1.5rem', textDecoration: 'none' }}>
                       Enter
                     </Link>
                   </div>
