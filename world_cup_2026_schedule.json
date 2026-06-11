@@ -1,0 +1,1194 @@
+{
+  "tournament": "FIFA World Cup 2026",
+  "host_nations": [
+    "United States",
+    "Mexico",
+    "Canada"
+  ],
+  "start_date": "2026-06-11",
+  "end_date": "2026-07-19",
+  "total_matches": 104,
+  "timezone_note": "time_et = Eastern Time (UTC-4). time_morocco_gmt1 = Morocco Time (GMT+1). Difference: +5 hours from ET.",
+  "stages": [
+    {
+      "stage": "Group Stage",
+      "dates": "June 11 – June 27, 2026",
+      "matches": [
+        {
+          "date": "2026-06-11",
+          "day": "Thursday",
+          "group": "A",
+          "home": "Mexico",
+          "away": "South Africa",
+          "time_et": "15:00",
+          "venue": "Estadio Azteca",
+          "city": "Mexico City, Mexico",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-11",
+          "day": "Thursday",
+          "group": "A",
+          "home": "South Korea",
+          "away": "Czechia",
+          "time_et": "22:00",
+          "venue": "Estadio Akron",
+          "city": "Zapopan, Mexico",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-12",
+          "day": "Friday",
+          "group": "B",
+          "home": "Canada",
+          "away": "Bosnia and Herzegovina",
+          "time_et": "15:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-12",
+          "day": "Friday",
+          "group": "D",
+          "home": "USA",
+          "away": "Paraguay",
+          "time_et": "21:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-13",
+          "day": "Saturday",
+          "group": "B",
+          "home": "Qatar",
+          "away": "Switzerland",
+          "time_et": "15:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-13",
+          "day": "Saturday",
+          "group": "C",
+          "home": "Brazil",
+          "away": "Morocco",
+          "time_et": "18:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-13",
+          "day": "Saturday",
+          "group": "C",
+          "home": "Haiti",
+          "away": "Scotland",
+          "time_et": "21:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-14",
+          "day": "Sunday",
+          "group": "D",
+          "home": "Australia",
+          "away": "Türkiye",
+          "time_et": "00:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "05:00"
+        },
+        {
+          "date": "2026-06-14",
+          "day": "Sunday",
+          "group": "E",
+          "home": "Germany",
+          "away": "Curaçao",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "date": "2026-06-14",
+          "day": "Sunday",
+          "group": "F",
+          "home": "Netherlands",
+          "away": "Japan",
+          "time_et": "16:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-14",
+          "day": "Sunday",
+          "group": "E",
+          "home": "Ivory Coast",
+          "away": "Ecuador",
+          "time_et": "19:00",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "date": "2026-06-14",
+          "day": "Sunday",
+          "group": "F",
+          "home": "Sweden",
+          "away": "Tunisia",
+          "time_et": "22:00",
+          "venue": "Estadio BBVA",
+          "city": "Monterrey, Mexico",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-15",
+          "day": "Monday",
+          "group": "H",
+          "home": "Spain",
+          "away": "Cape Verde",
+          "time_et": "12:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "17:00"
+        },
+        {
+          "date": "2026-06-15",
+          "day": "Monday",
+          "group": "G",
+          "home": "Belgium",
+          "away": "Egypt",
+          "time_et": "15:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-15",
+          "day": "Monday",
+          "group": "H",
+          "home": "Saudi Arabia",
+          "away": "Uruguay",
+          "time_et": "18:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-15",
+          "day": "Monday",
+          "group": "G",
+          "home": "Iran",
+          "away": "New Zealand",
+          "time_et": "21:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-16",
+          "day": "Tuesday",
+          "group": "I",
+          "home": "France",
+          "away": "Senegal",
+          "time_et": "15:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-16",
+          "day": "Tuesday",
+          "group": "I",
+          "home": "Iraq",
+          "away": "Norway",
+          "time_et": "18:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-16",
+          "day": "Tuesday",
+          "group": "J",
+          "home": "Argentina",
+          "away": "Algeria",
+          "time_et": "21:00",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-17",
+          "day": "Wednesday",
+          "group": "J",
+          "home": "Austria",
+          "away": "Jordan",
+          "time_et": "00:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "05:00"
+        },
+        {
+          "date": "2026-06-17",
+          "day": "Wednesday",
+          "group": "K",
+          "home": "Portugal",
+          "away": "DR Congo",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "date": "2026-06-17",
+          "day": "Wednesday",
+          "group": "L",
+          "home": "England",
+          "away": "Croatia",
+          "time_et": "16:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-17",
+          "day": "Wednesday",
+          "group": "L",
+          "home": "Ghana",
+          "away": "Panama",
+          "time_et": "19:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "date": "2026-06-17",
+          "day": "Wednesday",
+          "group": "K",
+          "home": "Uzbekistan",
+          "away": "Colombia",
+          "time_et": "22:00",
+          "venue": "Estadio Azteca",
+          "city": "Mexico City, Mexico",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-18",
+          "day": "Thursday",
+          "group": "A",
+          "home": "Czechia",
+          "away": "South Africa",
+          "time_et": "12:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "17:00"
+        },
+        {
+          "date": "2026-06-18",
+          "day": "Thursday",
+          "group": "B",
+          "home": "Switzerland",
+          "away": "Bosnia and Herzegovina",
+          "time_et": "15:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-18",
+          "day": "Thursday",
+          "group": "B",
+          "home": "Canada",
+          "away": "Qatar",
+          "time_et": "18:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-18",
+          "day": "Thursday",
+          "group": "A",
+          "home": "Mexico",
+          "away": "South Korea",
+          "time_et": "21:00",
+          "venue": "Estadio Akron",
+          "city": "Zapopan, Mexico",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-19",
+          "day": "Friday",
+          "group": "D",
+          "home": "USA",
+          "away": "Australia",
+          "time_et": "15:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-19",
+          "day": "Friday",
+          "group": "C",
+          "home": "Scotland",
+          "away": "Morocco",
+          "time_et": "18:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-19",
+          "day": "Friday",
+          "group": "C",
+          "home": "Brazil",
+          "away": "Haiti",
+          "time_et": "20:30",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "01:30"
+        },
+        {
+          "date": "2026-06-19",
+          "day": "Friday",
+          "group": "D",
+          "home": "Türkiye",
+          "away": "Paraguay",
+          "time_et": "23:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "04:00"
+        },
+        {
+          "date": "2026-06-20",
+          "day": "Saturday",
+          "group": "F",
+          "home": "Netherlands",
+          "away": "Sweden",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "date": "2026-06-20",
+          "day": "Saturday",
+          "group": "E",
+          "home": "Germany",
+          "away": "Ivory Coast",
+          "time_et": "16:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-20",
+          "day": "Saturday",
+          "group": "E",
+          "home": "Ecuador",
+          "away": "Curaçao",
+          "time_et": "20:00",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "date": "2026-06-21",
+          "day": "Sunday",
+          "group": "F",
+          "home": "Tunisia",
+          "away": "Japan",
+          "time_et": "00:00",
+          "venue": "Estadio BBVA",
+          "city": "Monterrey, Mexico",
+          "time_morocco_gmt1": "05:00"
+        },
+        {
+          "date": "2026-06-21",
+          "day": "Sunday",
+          "group": "H",
+          "home": "Spain",
+          "away": "Saudi Arabia",
+          "time_et": "12:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "17:00"
+        },
+        {
+          "date": "2026-06-21",
+          "day": "Sunday",
+          "group": "G",
+          "home": "Belgium",
+          "away": "Iran",
+          "time_et": "15:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-21",
+          "day": "Sunday",
+          "group": "H",
+          "home": "Uruguay",
+          "away": "Cape Verde",
+          "time_et": "18:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-21",
+          "day": "Sunday",
+          "group": "G",
+          "home": "New Zealand",
+          "away": "Egypt",
+          "time_et": "21:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-22",
+          "day": "Monday",
+          "group": "J",
+          "home": "Argentina",
+          "away": "Austria",
+          "time_et": "13:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "date": "2026-06-22",
+          "day": "Monday",
+          "group": "I",
+          "home": "France",
+          "away": "Iraq",
+          "time_et": "17:00",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "date": "2026-06-22",
+          "day": "Monday",
+          "group": "I",
+          "home": "Norway",
+          "away": "Senegal",
+          "time_et": "20:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "date": "2026-06-22",
+          "day": "Monday",
+          "group": "J",
+          "home": "Jordan",
+          "away": "Algeria",
+          "time_et": "23:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "04:00"
+        },
+        {
+          "date": "2026-06-23",
+          "day": "Tuesday",
+          "group": "K",
+          "home": "Portugal",
+          "away": "Uzbekistan",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "date": "2026-06-23",
+          "day": "Tuesday",
+          "group": "L",
+          "home": "England",
+          "away": "Ghana",
+          "time_et": "16:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-23",
+          "day": "Tuesday",
+          "group": "L",
+          "home": "Panama",
+          "away": "Croatia",
+          "time_et": "19:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "date": "2026-06-23",
+          "day": "Tuesday",
+          "group": "K",
+          "home": "Colombia",
+          "away": "DR Congo",
+          "time_et": "22:00",
+          "venue": "Estadio Akron",
+          "city": "Zapopan, Mexico",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "B",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Switzerland",
+          "away": "Canada",
+          "time_et": "15:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "B",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Bosnia and Herzegovina",
+          "away": "Qatar",
+          "time_et": "15:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "C",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Scotland",
+          "away": "Brazil",
+          "time_et": "18:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "C",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Morocco",
+          "away": "Haiti",
+          "time_et": "18:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "A",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Czechia",
+          "away": "Mexico",
+          "time_et": "21:00",
+          "venue": "Estadio Azteca",
+          "city": "Mexico City, Mexico",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-24",
+          "day": "Wednesday",
+          "group": "A",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "South Africa",
+          "away": "South Korea",
+          "time_et": "21:00",
+          "venue": "Estadio BBVA",
+          "city": "Monterrey, Mexico",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "E",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Curaçao",
+          "away": "Ivory Coast",
+          "time_et": "16:00",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "E",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Ecuador",
+          "away": "Germany",
+          "time_et": "16:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "F",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Japan",
+          "away": "Sweden",
+          "time_et": "19:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "F",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Tunisia",
+          "away": "Netherlands",
+          "time_et": "19:00",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "D",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Türkiye",
+          "away": "USA",
+          "time_et": "22:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-25",
+          "day": "Thursday",
+          "group": "D",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Paraguay",
+          "away": "Australia",
+          "time_et": "22:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "I",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Norway",
+          "away": "France",
+          "time_et": "15:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "I",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Senegal",
+          "away": "Iraq",
+          "time_et": "15:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "H",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Cape Verde",
+          "away": "Saudi Arabia",
+          "time_et": "20:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "H",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Uruguay",
+          "away": "Spain",
+          "time_et": "20:00",
+          "venue": "Estadio Akron",
+          "city": "Zapopan, Mexico",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "G",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Egypt",
+          "away": "Iran",
+          "time_et": "23:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "04:00"
+        },
+        {
+          "date": "2026-06-26",
+          "day": "Friday",
+          "group": "G",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "New Zealand",
+          "away": "Belgium",
+          "time_et": "23:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "04:00"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "L",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Panama",
+          "away": "England",
+          "time_et": "17:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "L",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Croatia",
+          "away": "Ghana",
+          "time_et": "17:00",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "K",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Colombia",
+          "away": "Portugal",
+          "time_et": "19:30",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "00:30"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "K",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "DR Congo",
+          "away": "Uzbekistan",
+          "time_et": "19:30",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "00:30"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "J",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Algeria",
+          "away": "Austria",
+          "time_et": "22:00",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "03:00"
+        },
+        {
+          "date": "2026-06-27",
+          "day": "Saturday",
+          "group": "J",
+          "note": "Final matchday – simultaneous kickoffs",
+          "home": "Jordan",
+          "away": "Argentina",
+          "time_et": "22:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "03:00"
+        }
+      ]
+    },
+    {
+      "stage": "Round of 32",
+      "dates": "June 28 – July 3, 2026",
+      "note": "Brand-new round never used at any previous World Cup. All ties go to extra time, then penalties if needed.",
+      "matches": [
+        {
+          "match_no": 73,
+          "date": "2026-06-28",
+          "day": "Sunday",
+          "matchup": "Runner-up Group A vs. Runner-up Group B",
+          "time_et": "15:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "match_no": 76,
+          "date": "2026-06-29",
+          "day": "Monday",
+          "matchup": "Winner Group C vs. Runner-up Group F",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "match_no": 74,
+          "date": "2026-06-29",
+          "day": "Monday",
+          "matchup": "Winner Group E vs. Best 3rd (Groups A/B/C/D/F)",
+          "time_et": "16:30",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "21:30"
+        },
+        {
+          "match_no": 75,
+          "date": "2026-06-29",
+          "day": "Monday",
+          "matchup": "Winner Group F vs. Runner-up Group C",
+          "time_et": "21:00",
+          "venue": "Estadio BBVA",
+          "city": "Monterrey, Mexico",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "match_no": 78,
+          "date": "2026-06-30",
+          "day": "Tuesday",
+          "matchup": "Runner-up Group E vs. Runner-up Group I",
+          "time_et": "13:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "match_no": 77,
+          "date": "2026-06-30",
+          "day": "Tuesday",
+          "matchup": "Winner Group I vs. Best 3rd (Groups C/D/F/G/H)",
+          "time_et": "17:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "match_no": 79,
+          "date": "2026-06-30",
+          "day": "Tuesday",
+          "matchup": "Winner Group A vs. Best 3rd (Groups C/E/F/H/I)",
+          "time_et": "21:00",
+          "venue": "Estadio Azteca",
+          "city": "Mexico City, Mexico",
+          "time_morocco_gmt1": "02:00"
+        },
+        {
+          "match_no": 80,
+          "date": "2026-07-01",
+          "day": "Wednesday",
+          "matchup": "Winner Group L vs. Best 3rd (Groups E/H/I/J/K)",
+          "time_et": "12:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "17:00"
+        },
+        {
+          "match_no": 82,
+          "date": "2026-07-01",
+          "day": "Wednesday",
+          "matchup": "Winner Group G vs. Best 3rd (Groups A/E/H/I/J)",
+          "time_et": "16:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "match_no": 81,
+          "date": "2026-07-01",
+          "day": "Wednesday",
+          "matchup": "Winner Group D vs. Best 3rd (Groups B/E/F/I/J)",
+          "time_et": "20:00",
+          "venue": "Levi's Stadium",
+          "city": "Santa Clara, CA, USA",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "match_no": 84,
+          "date": "2026-07-02",
+          "day": "Thursday",
+          "matchup": "Winner Group H vs. Runner-up Group J",
+          "time_et": "15:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "match_no": 83,
+          "date": "2026-07-02",
+          "day": "Thursday",
+          "matchup": "Runner-up Group K vs. Runner-up Group L",
+          "time_et": "19:00",
+          "venue": "BMO Field",
+          "city": "Toronto, Canada",
+          "time_morocco_gmt1": "00:00"
+        },
+        {
+          "match_no": 85,
+          "date": "2026-07-02",
+          "day": "Thursday",
+          "matchup": "Winner Group B vs. Best 3rd (Groups E/F/G/I/J)",
+          "time_et": "23:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "04:00"
+        },
+        {
+          "match_no": 88,
+          "date": "2026-07-03",
+          "day": "Friday",
+          "matchup": "Runner-up Group D vs. Runner-up Group G",
+          "time_et": "14:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "19:00"
+        },
+        {
+          "match_no": 86,
+          "date": "2026-07-03",
+          "day": "Friday",
+          "matchup": "Winner Group J vs. Runner-up Group H",
+          "time_et": "18:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "23:00"
+        },
+        {
+          "match_no": 87,
+          "date": "2026-07-03",
+          "day": "Friday",
+          "matchup": "Winner Group K vs. Best 3rd (Groups D/E/I/J/L)",
+          "time_et": "21:30",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "02:30"
+        }
+      ]
+    },
+    {
+      "stage": "Round of 16",
+      "dates": "July 4 – July 7, 2026",
+      "matches": [
+        {
+          "match_no": 90,
+          "date": "2026-07-04",
+          "day": "Saturday",
+          "matchup": "Winner Match 73 vs. Winner Match 75",
+          "time_et": "13:00",
+          "venue": "NRG Stadium",
+          "city": "Houston, TX, USA",
+          "time_morocco_gmt1": "18:00"
+        },
+        {
+          "match_no": 89,
+          "date": "2026-07-04",
+          "day": "Saturday",
+          "matchup": "Winner Match 74 vs. Winner Match 77",
+          "time_et": "17:00",
+          "venue": "Lincoln Financial Field",
+          "city": "Philadelphia, PA, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "match_no": 91,
+          "date": "2026-07-05",
+          "day": "Sunday",
+          "matchup": "Winner Match 76 vs. Winner Match 78",
+          "time_et": "16:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "match_no": 92,
+          "date": "2026-07-05",
+          "day": "Sunday",
+          "matchup": "Winner Match 79 vs. Winner Match 80",
+          "time_et": "20:00",
+          "venue": "Estadio Azteca",
+          "city": "Mexico City, Mexico",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "match_no": 93,
+          "date": "2026-07-06",
+          "day": "Monday",
+          "matchup": "Winner Match 83 vs. Winner Match 84",
+          "time_et": "15:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "match_no": 94,
+          "date": "2026-07-06",
+          "day": "Monday",
+          "matchup": "Winner Match 81 vs. Winner Match 82",
+          "time_et": "20:00",
+          "venue": "Lumen Field",
+          "city": "Seattle, WA, USA",
+          "time_morocco_gmt1": "01:00"
+        },
+        {
+          "match_no": 95,
+          "date": "2026-07-07",
+          "day": "Tuesday",
+          "matchup": "Winner Match 86 vs. Winner Match 88",
+          "time_et": "12:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "17:00"
+        },
+        {
+          "match_no": 96,
+          "date": "2026-07-07",
+          "day": "Tuesday",
+          "matchup": "Winner Match 85 vs. Winner Match 87",
+          "time_et": "16:00",
+          "venue": "BC Place",
+          "city": "Vancouver, Canada",
+          "time_morocco_gmt1": "21:00"
+        }
+      ]
+    },
+    {
+      "stage": "Quarterfinals",
+      "dates": "July 9 – July 11, 2026",
+      "matches": [
+        {
+          "match_no": 97,
+          "date": "2026-07-09",
+          "day": "Thursday",
+          "matchup": "Winner Match 89 vs. Winner Match 90",
+          "time_et": "16:00",
+          "venue": "Gillette Stadium",
+          "city": "Foxborough, MA, USA",
+          "time_morocco_gmt1": "21:00"
+        },
+        {
+          "match_no": 98,
+          "date": "2026-07-10",
+          "day": "Friday",
+          "matchup": "Winner Match 93 vs. Winner Match 94",
+          "time_et": "15:00",
+          "venue": "SoFi Stadium",
+          "city": "Inglewood, CA, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "match_no": 99,
+          "date": "2026-07-11",
+          "day": "Saturday",
+          "matchup": "Winner Match 91 vs. Winner Match 92",
+          "time_et": "17:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "22:00"
+        },
+        {
+          "match_no": 100,
+          "date": "2026-07-11",
+          "day": "Saturday",
+          "matchup": "Winner Match 95 vs. Winner Match 96",
+          "time_et": "21:00",
+          "venue": "Arrowhead Stadium",
+          "city": "Kansas City, MO, USA",
+          "time_morocco_gmt1": "02:00"
+        }
+      ]
+    },
+    {
+      "stage": "Semifinals",
+      "dates": "July 14 – July 15, 2026",
+      "matches": [
+        {
+          "match_no": 101,
+          "date": "2026-07-14",
+          "day": "Tuesday",
+          "matchup": "Winner Match 97 vs. Winner Match 98",
+          "time_et": "15:00",
+          "venue": "AT&T Stadium",
+          "city": "Arlington, TX, USA",
+          "time_morocco_gmt1": "20:00"
+        },
+        {
+          "match_no": 102,
+          "date": "2026-07-15",
+          "day": "Wednesday",
+          "matchup": "Winner Match 99 vs. Winner Match 100",
+          "time_et": "15:00",
+          "venue": "Mercedes-Benz Stadium",
+          "city": "Atlanta, GA, USA",
+          "time_morocco_gmt1": "20:00"
+        }
+      ]
+    },
+    {
+      "stage": "Third-Place Match",
+      "dates": "July 18, 2026",
+      "matches": [
+        {
+          "match_no": 103,
+          "date": "2026-07-18",
+          "day": "Saturday",
+          "matchup": "Loser Match 101 vs. Loser Match 102",
+          "time_et": "17:00",
+          "venue": "Hard Rock Stadium",
+          "city": "Miami Gardens, FL, USA",
+          "time_morocco_gmt1": "22:00"
+        }
+      ]
+    },
+    {
+      "stage": "Final",
+      "dates": "July 19, 2026",
+      "matches": [
+        {
+          "match_no": 104,
+          "date": "2026-07-19",
+          "day": "Sunday",
+          "matchup": "Winner Match 101 vs. Winner Match 102",
+          "time_et": "15:00",
+          "venue": "MetLife Stadium",
+          "city": "East Rutherford, NJ, USA",
+          "note": "FIFA officially calls it 'New York New Jersey Stadium' during the tournament. Capacity: 82,500.",
+          "time_morocco_gmt1": "20:00"
+        }
+      ]
+    }
+  ]
+}

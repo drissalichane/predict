@@ -1,0 +1,394 @@
+{
+  "tournament": "FIFA World Cup 2026",
+  "host_nations": ["United States", "Mexico", "Canada"],
+  "dates": "June 11 – July 19, 2026",
+  "ranking_source": "FIFA Official Rankings – April 1, 2026 update",
+  "note": "A new FIFA ranking update was due June 11, 2026 (opening day). April 1 figures are the last confirmed pre-tournament rankings.",
+  "total_teams": 48,
+  "teams_by_fifa_rank": [
+    {
+      "fifa_rank": 1,
+      "team": "France",
+      "confederation": "UEFA",
+      "group": "I",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Winner (1998, 2018)"
+    },
+    {
+      "fifa_rank": 2,
+      "team": "Spain",
+      "confederation": "UEFA",
+      "group": "H",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Winner (2010)"
+    },
+    {
+      "fifa_rank": 3,
+      "team": "Argentina",
+      "confederation": "CONMEBOL",
+      "group": "J",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Winner (1978, 1986, 2022)"
+    },
+    {
+      "fifa_rank": 4,
+      "team": "England",
+      "confederation": "UEFA",
+      "group": "L",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Winner (1966)"
+    },
+    {
+      "fifa_rank": 5,
+      "team": "Portugal",
+      "confederation": "UEFA",
+      "group": "K",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Semi-finals (1966, 2006)"
+    },
+    {
+      "fifa_rank": 6,
+      "team": "Brazil",
+      "confederation": "CONMEBOL",
+      "group": "C",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Winner (1958, 1962, 1970, 1994, 2002)"
+    },
+    {
+      "fifa_rank": 7,
+      "team": "Netherlands",
+      "confederation": "UEFA",
+      "group": "F",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Runner-up (1974, 1978, 2010)"
+    },
+    {
+      "fifa_rank": 8,
+      "team": "Morocco",
+      "confederation": "CAF",
+      "group": "C",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Semi-finals (2022)"
+    },
+    {
+      "fifa_rank": 9,
+      "team": "Belgium",
+      "confederation": "UEFA",
+      "group": "G",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Semi-finals (2018)"
+    },
+    {
+      "fifa_rank": 10,
+      "team": "Germany",
+      "confederation": "UEFA",
+      "group": "E",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Winner (1954, 1974, 1990, 2014)"
+    },
+    {
+      "fifa_rank": 11,
+      "team": "Croatia",
+      "confederation": "UEFA",
+      "group": "L",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Runner-up (2018)"
+    },
+    {
+      "fifa_rank": 13,
+      "team": "Colombia",
+      "confederation": "CONMEBOL",
+      "group": "K",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Quarter-finals (2014)"
+    },
+    {
+      "fifa_rank": 14,
+      "team": "Senegal",
+      "confederation": "CAF",
+      "group": "I",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Quarter-finals (2002)"
+    },
+    {
+      "fifa_rank": 15,
+      "team": "Mexico",
+      "confederation": "CONCACAF",
+      "group": "A",
+      "qualification_method": "Host",
+      "best_world_cup_result": "Quarter-finals (1970, 1986)"
+    },
+    {
+      "fifa_rank": 16,
+      "team": "United States",
+      "confederation": "CONCACAF",
+      "group": "D",
+      "qualification_method": "Host",
+      "best_world_cup_result": "Third place (1930)"
+    },
+    {
+      "fifa_rank": 17,
+      "team": "Uruguay",
+      "confederation": "CONMEBOL",
+      "group": "H",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Winner (1930, 1950)"
+    },
+    {
+      "fifa_rank": 18,
+      "team": "Japan",
+      "confederation": "AFC",
+      "group": "F",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Round of 16 (2002, 2010, 2018, 2022)"
+    },
+    {
+      "fifa_rank": 19,
+      "team": "Switzerland",
+      "confederation": "UEFA",
+      "group": "B",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Quarter-finals (1934, 1938, 1954)"
+    },
+    {
+      "fifa_rank": 21,
+      "team": "Iran",
+      "confederation": "AFC",
+      "group": "G",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Group stage (1978, 1998, 2006, 2014, 2018, 2022)"
+    },
+    {
+      "fifa_rank": 22,
+      "team": "Türkiye",
+      "confederation": "UEFA",
+      "group": "D",
+      "qualification_method": "UEFA Playoff",
+      "best_world_cup_result": "Third place (2002)"
+    },
+    {
+      "fifa_rank": 23,
+      "team": "Ecuador",
+      "confederation": "CONMEBOL",
+      "group": "E",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Round of 16 (2006)"
+    },
+    {
+      "fifa_rank": 24,
+      "team": "Austria",
+      "confederation": "UEFA",
+      "group": "J",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Third place (1954)"
+    },
+    {
+      "fifa_rank": 25,
+      "team": "South Korea",
+      "confederation": "AFC",
+      "group": "A",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Semi-finals (2002)"
+    },
+    {
+      "fifa_rank": 27,
+      "team": "Australia",
+      "confederation": "AFC",
+      "group": "D",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Round of 16 (2006, 2022)"
+    },
+    {
+      "fifa_rank": 30,
+      "team": "Canada",
+      "confederation": "CONCACAF",
+      "group": "B",
+      "qualification_method": "Host",
+      "best_world_cup_result": "Group stage (1986, 2022)"
+    },
+    {
+      "fifa_rank": 32,
+      "team": "Norway",
+      "confederation": "UEFA",
+      "group": "I",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Round of 16 (1998)"
+    },
+    {
+      "fifa_rank": 33,
+      "team": "Egypt",
+      "confederation": "CAF",
+      "group": "G",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Group stage (1934, 1990, 2018)"
+    },
+    {
+      "fifa_rank": 36,
+      "team": "Algeria",
+      "confederation": "CAF",
+      "group": "J",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Round of 16 (2014)"
+    },
+    {
+      "fifa_rank": 37,
+      "team": "Sweden",
+      "confederation": "UEFA",
+      "group": "F",
+      "qualification_method": "UEFA Playoff",
+      "best_world_cup_result": "Runner-up (1958)"
+    },
+    {
+      "fifa_rank": 38,
+      "team": "Paraguay",
+      "confederation": "CONMEBOL",
+      "group": "D",
+      "qualification_method": "CONMEBOL Qualifier",
+      "best_world_cup_result": "Quarter-finals (2010)"
+    },
+    {
+      "fifa_rank": 39,
+      "team": "Ivory Coast",
+      "confederation": "CAF",
+      "group": "E",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Group stage (2006, 2010, 2014)"
+    },
+    {
+      "fifa_rank": 41,
+      "team": "Czechia",
+      "confederation": "UEFA",
+      "group": "A",
+      "qualification_method": "UEFA Playoff",
+      "best_world_cup_result": "Runner-up as Czechoslovakia (1934, 1962)"
+    },
+    {
+      "fifa_rank": 43,
+      "team": "Scotland",
+      "confederation": "UEFA",
+      "group": "C",
+      "qualification_method": "UEFA Qualifier",
+      "best_world_cup_result": "Group stage (first time since 1998)"
+    },
+    {
+      "fifa_rank": 47,
+      "team": "Tunisia",
+      "confederation": "CAF",
+      "group": "F",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Group stage (1978, 1998, 2002, 2006, 2022)"
+    },
+    {
+      "fifa_rank": 51,
+      "team": "Panama",
+      "confederation": "CONCACAF",
+      "group": "L",
+      "qualification_method": "CONCACAF Qualifier",
+      "best_world_cup_result": "Group stage (2018)"
+    },
+    {
+      "fifa_rank": 53,
+      "team": "Qatar",
+      "confederation": "AFC",
+      "group": "B",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Group stage (2022)"
+    },
+    {
+      "fifa_rank": 55,
+      "team": "DR Congo",
+      "confederation": "CAF",
+      "group": "K",
+      "qualification_method": "Inter-confederation Playoff",
+      "best_world_cup_result": "Group stage (1974 as Zaire)"
+    },
+    {
+      "fifa_rank": 56,
+      "team": "Iraq",
+      "confederation": "AFC",
+      "group": "I",
+      "qualification_method": "Inter-confederation Playoff",
+      "best_world_cup_result": "Group stage (1986)"
+    },
+    {
+      "fifa_rank": 57,
+      "team": "Uzbekistan",
+      "confederation": "AFC",
+      "group": "K",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "First appearance"
+    },
+    {
+      "fifa_rank": 58,
+      "team": "Saudi Arabia",
+      "confederation": "AFC",
+      "group": "H",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "Round of 16 (1994)"
+    },
+    {
+      "fifa_rank": 60,
+      "team": "South Africa",
+      "confederation": "CAF",
+      "group": "A",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Group stage (1998, 2002, 2010)"
+    },
+    {
+      "fifa_rank": 64,
+      "team": "Jordan",
+      "confederation": "AFC",
+      "group": "J",
+      "qualification_method": "AFC Qualifier",
+      "best_world_cup_result": "First appearance"
+    },
+    {
+      "fifa_rank": 70,
+      "team": "Cape Verde",
+      "confederation": "CAF",
+      "group": "H",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "First appearance"
+    },
+    {
+      "fifa_rank": 71,
+      "team": "Bosnia and Herzegovina",
+      "confederation": "UEFA",
+      "group": "B",
+      "qualification_method": "UEFA Playoff",
+      "best_world_cup_result": "Group stage (2014)"
+    },
+    {
+      "fifa_rank": 73,
+      "team": "Ghana",
+      "confederation": "CAF",
+      "group": "L",
+      "qualification_method": "CAF Qualifier",
+      "best_world_cup_result": "Quarter-finals (2010)"
+    },
+    {
+      "fifa_rank": 79,
+      "team": "Haiti",
+      "confederation": "CONCACAF",
+      "group": "C",
+      "qualification_method": "CONCACAF Qualifier",
+      "best_world_cup_result": "Group stage (1974)"
+    },
+    {
+      "fifa_rank": 81,
+      "team": "Curaçao",
+      "confederation": "CONCACAF",
+      "group": "E",
+      "qualification_method": "CONCACAF Qualifier",
+      "best_world_cup_result": "First appearance"
+    },
+    {
+      "fifa_rank": 88,
+      "team": "New Zealand",
+      "confederation": "OFC",
+      "group": "G",
+      "qualification_method": "OFC Qualifier",
+      "best_world_cup_result": "Group stage (1982, 2010)"
+    }
+  ]
+}
