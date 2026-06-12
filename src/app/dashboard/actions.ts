@@ -4,6 +4,24 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
+async function initializeUserPoints(supabase: any, roomId: string, userId: string) {
+  const { data: predictions } = await supabase
+    .from('predictions')
+    .select('points_earned')
+    .eq('room_id', roomId)
+    .eq('user_id', userId)
+    
+  if (predictions && predictions.length > 0) {
+    const totalPoints = predictions.reduce((sum: number, p: any) => sum + (p.points_earned || 0), 0)
+    await supabase
+      .from('room_members')
+      .update({ total_points: parseFloat(totalPoints.toFixed(2)) })
+      .eq('room_id', roomId)
+      .eq('user_id', userId)
+  }
+}
+
+
 export async function createRoom(formData: FormData) {
   const supabase = await createClient()
   const name = formData.get('name') as string
@@ -68,6 +86,9 @@ export async function joinRoom(formData: FormData) {
     return { error: 'Failed to join room' }
   }
 
+  // Calculate existing points
+  await initializeUserPoints(supabase, room.id, user.id)
+
   revalidatePath('/dashboard')
   redirect(`/room/${room.id}?welcome=true`)
 }
@@ -113,6 +134,9 @@ export async function joinRoomById(formData: FormData) {
     console.error('Error joining room by ID', joinError)
     redirect('/dashboard?error=Failed+to+join+room')
   }
+
+  // Calculate existing points
+  await initializeUserPoints(supabase, roomId, user.id)
 
   revalidatePath('/dashboard')
   redirect(`/room/${roomId}?welcome=true`)

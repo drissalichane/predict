@@ -65,7 +65,10 @@ export async function GET(request: NextRequest) {
       return t ? t.fifa_rank : 100 // default rank 100
     }
 
-    for (const m of matches) {
+    const { data: existingMatches } = await supabaseAdmin.from('matches').select('id')
+    const existingIds = new Set(existingMatches?.map(m => m.id) || [])
+
+    const matchPromises = matches.map((m: any) => {
       const homeName = m.homeTeam.name || 'TBD'
       const awayName = m.awayTeam.name || 'TBD'
 
@@ -90,16 +93,11 @@ export async function GET(request: NextRequest) {
         status: m.status,
       }
 
-      // Check if match exists to not overwrite odds
-      const { data: existing } = await supabaseAdmin
-        .from('matches')
-        .select('id')
-        .eq('id', m.id)
-        .single()
+      updatedCount++;
 
-      if (existing) {
+      if (existingIds.has(m.id)) {
         // Update with new realistic odds
-        await supabaseAdmin.from('matches').update({
+        return supabaseAdmin.from('matches').update({
           ...matchData,
           odds_home: oddsHome,
           odds_draw: oddsDraw,
@@ -107,15 +105,17 @@ export async function GET(request: NextRequest) {
         }).eq('id', m.id)
       } else {
         // Insert with new mock odds
-        await supabaseAdmin.from('matches').insert({
+        return supabaseAdmin.from('matches').insert({
           ...matchData,
           odds_home: oddsHome,
           odds_draw: oddsDraw,
           odds_away: oddsAway
         })
       }
-      updatedCount++;
-    }
+    })
+
+    // Execute match updates in parallel
+    await Promise.all(matchPromises)
 
     // ----------------------------------------------------
     // SCORING ENGINE
@@ -157,7 +157,7 @@ export async function GET(request: NextRequest) {
 
         if (!predictions) continue
 
-        for (const pred of predictions) {
+        const predictionPromises = predictions.map((pred: any) => {
           const ph = pred.predicted_home_score
           const pa = pred.predicted_away_score
           const ah = fm.home_score
@@ -183,11 +183,14 @@ export async function GET(request: NextRequest) {
 
           // Update if changed
           if (pred.points_earned !== pointsEarned) {
-            await supabaseAdmin.from('predictions')
+            return supabaseAdmin.from('predictions')
               .update({ points_earned: pointsEarned })
               .eq('id', pred.id)
           }
-        }
+          return null
+        }).filter(Boolean)
+
+        await Promise.all(predictionPromises)
       }
 
       // 2. Aggregate points and update leaderboards
@@ -203,13 +206,15 @@ export async function GET(request: NextRequest) {
           pointsMap.set(key, (pointsMap.get(key) || 0) + p.points_earned)
         }
 
-        for (const [key, totalPoints] of pointsMap.entries()) {
+        const leaderboardPromises = Array.from(pointsMap.entries()).map(([key, totalPoints]) => {
           const [roomId, userId] = key.split('_')
-          await supabaseAdmin.from('room_members')
+          return supabaseAdmin.from('room_members')
             .update({ total_points: parseFloat(totalPoints.toFixed(2)) })
             .eq('room_id', roomId)
             .eq('user_id', userId)
-        }
+        })
+        
+        await Promise.all(leaderboardPromises)
       }
     }
 
