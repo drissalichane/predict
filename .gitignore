@@ -40,3 +40,8 @@ vercel.env
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# custom ignored directories
+/docs/
+/public/
+/scripts/

@@ -20,13 +20,13 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
 
   return (
-    <main className="container" style={{ padding: '4rem 2rem' }}>
+    <main className="container main-content">
       <h1 className="text-solid" style={{ marginBottom: '2rem' }}>Dashboard</h1>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
         
         {/* Rooms List */}
-        <div className="glass-panel" style={{ padding: '2rem' }}>
+        <div className="glass-panel glass-panel-sm">
           <h2 style={{ marginBottom: '1.5rem', color: 'var(--color-wimbledon-lime)' }}>My Rooms</h2>
           
           {!memberships || memberships.length === 0 ? (
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           {/* Create Room */}
-          <div className="bg-surface" style={{ padding: '2rem', borderRadius: 'var(--radius-lg)' }}>
+          <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
             <h3 style={{ marginBottom: '1rem' }}>Create a New Room</h3>
             <form action={createRoom as any} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input 
@@ -78,7 +78,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Join Room */}
-          <div className="bg-surface" style={{ padding: '2rem', borderRadius: 'var(--radius-lg)' }}>
+          <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
             <h3 style={{ marginBottom: '1rem' }}>Join a Room</h3>
             <form action={joinRoom as any} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input 

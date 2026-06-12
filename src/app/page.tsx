@@ -10,7 +10,7 @@ export default async function Home() {
   if (!user) {
     return (
       <main className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '500px', width: '100%' }}>
+        <div className="glass-panel" style={{ textAlign: 'center', maxWidth: '500px', width: '100%' }}>
           <h1 style={{ marginBottom: '1rem', fontSize: '2.5rem' }}>
             <span className="text-solid">World Cup</span> Predictions
           </h1>
@@ -86,7 +86,7 @@ export default async function Home() {
   return (
     <main className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-      <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '800px', width: '100%' }}>
+      <div className="glass-panel" style={{ textAlign: 'center', maxWidth: '800px', width: '100%' }}>
         <h1 style={{ marginBottom: '1rem' }}>
           <span className="text-solid">World Cup</span> Predictions
         </h1>

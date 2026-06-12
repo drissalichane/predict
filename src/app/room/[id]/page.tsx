@@ -33,7 +33,7 @@ export default async function RoomPage({
   if (!user) {
     return (
       <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+        <div className="glass-panel" style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
           <h2 style={{ marginBottom: '1rem', fontSize: '2.5rem' }} className="text-solid">You're Invited!</h2>
           <p style={{ color: 'var(--color-text-primary)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
             You've been invited to join the <strong>{room.name}</strong> prediction room.
@@ -62,7 +62,7 @@ export default async function RoomPage({
   if (membershipError || !membership) {
     return (
       <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="glass-panel" style={{ padding: '4rem', textAlign: 'center', maxWidth: '600px', width: '100%' }}>
+        <div className="glass-panel" style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
           <h2 style={{ marginBottom: '1rem', fontSize: '2.5rem' }} className="text-solid">Join Room</h2>
           <p style={{ color: 'var(--color-text-primary)', marginBottom: '2.5rem', fontSize: '1.2rem' }}>
             You're authenticated and ready! Click below to officially join <strong>{room.name}</strong> and make your predictions.
@@ -101,7 +101,7 @@ export default async function RoomPage({
     .eq('room_id', roomId)
 
   return (
-    <main className="container" style={{ padding: '4rem 2rem' }}>
+    <main className="container main-content">
       {resolvedSearchParams?.welcome === 'true' && (
         <div style={{ padding: '1rem 1.5rem', background: 'rgba(163, 193, 56, 0.1)', border: '1px solid var(--color-wimbledon-lime)', borderRadius: 'var(--radius-md)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'fadeIn 0.5s ease-out' }}>
           <span style={{ fontSize: '1.5rem' }}>🎉</span>
@@ -111,7 +111,7 @@ export default async function RoomPage({
           </div>
         </div>
       )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <Link href="/dashboard" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'inline-block' }}>
             &larr; Back to Dashboard
@@ -128,10 +128,10 @@ export default async function RoomPage({
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
+      <div className="room-grid">
         
         {/* Leaderboard */}
-        <div className="glass-panel" style={{ padding: '2rem', position: 'sticky', top: '2rem', maxHeight: 'calc(100vh - 4rem)', overflowY: 'auto' }}>
+        <div className="glass-panel glass-panel-sm sticky-panel">
           <h2 style={{ marginBottom: '1.5rem', color: 'var(--color-wimbledon-lime)' }}>Leaderboard</h2>
           
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

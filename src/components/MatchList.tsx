@@ -59,7 +59,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   useEffect(() => setIsMounted(true), [])
 
   return (
-    <div className="bg-surface" style={{ padding: '2rem', borderRadius: 'var(--radius-lg)' }}>
+    <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Matches & Predictions</h2>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -114,7 +114,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     await submitPrediction(formData)
                     setEditMode(prev => ({ ...prev, [match.id]: false }))
                   }} 
-                  style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center' }}
+                  style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
                 >
                   <input type="hidden" name="matchId" value={match.id} />
                   <input type="hidden" name="roomId" value={roomId} />

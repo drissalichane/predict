@@ -20,7 +20,7 @@ export default async function Navbar() {
   }
 
   return (
-    <nav style={{ padding: '1rem 2rem', background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <nav className="navbar">
       <Link href="/" style={{ fontSize: '1.25rem', fontWeight: 'bold', fontFamily: 'var(--font-heading)' }}>
         <span className="text-solid">WC</span> Predictions
       </Link>
