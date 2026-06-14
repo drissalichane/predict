@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { submitPrediction } from '@/app/room/[id]/actions'
 
-type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string }
+type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
 type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
 
 export default function MatchList({ matches, initialPredictions, roomId }: { matches: Match[], initialPredictions: Prediction[], roomId: string }) {
@@ -38,8 +38,13 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
   const [selectedRound, setSelectedRound] = useState(rounds[0] || '')
+  const [showPrevious, setShowPrevious] = useState(false)
 
   const filteredMatches = matches.filter(m => {
+    const isFinished = m.status === 'FINISHED'
+    if (showPrevious && !isFinished) return false
+    if (!showPrevious && isFinished) return false
+
     if (filterMode === 'all') return true
     if (filterMode === 'day') return formatDay(m.kickoff_time) === selectedDay
     if (filterMode === 'round') return getStage(m.kickoff_time) === selectedRound
@@ -69,21 +74,28 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
         </div>
       </div>
 
-      {filterMode === 'day' && (
-        <div style={{ marginBottom: '1.5rem' }}>
-          <select value={selectedDay} onChange={e => setSelectedDay(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
-            {days.map(d => <option key={d} value={d}>{d}</option>)}
-          </select>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <div>
+          {filterMode === 'day' && (
+            <select value={selectedDay} onChange={e => setSelectedDay(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
+              {days.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          )}
+          {filterMode === 'round' && (
+            <select value={selectedRound} onChange={e => setSelectedRound(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
+              {rounds.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          )}
         </div>
-      )}
-
-      {filterMode === 'round' && (
-        <div style={{ marginBottom: '1.5rem' }}>
-          <select value={selectedRound} onChange={e => setSelectedRound(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
-            {rounds.map(r => <option key={r} value={r}>{r}</option>)}
-          </select>
-        </div>
-      )}
+        <button 
+          type="button" 
+          onClick={() => setShowPrevious(!showPrevious)} 
+          className={`btn ${showPrevious ? 'btn-primary' : 'btn-outline'}`}
+          style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
+        >
+          {showPrevious ? 'Upcoming Games' : 'Previous Games'}
+        </button>
+      </div>
       
       {!filteredMatches || filteredMatches.length === 0 ? (
           <p style={{ color: 'var(--color-text-secondary)' }}>No matches found for this filter.</p>
@@ -109,58 +121,72 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                   <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{match.away_team}</span>
                 </div>
 
-                <form 
-                  action={async (formData) => {
-                    await submitPrediction(formData)
-                    setEditMode(prev => ({ ...prev, [match.id]: false }))
-                  }} 
-                  style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
-                >
-                  <input type="hidden" name="matchId" value={match.id} />
-                  <input type="hidden" name="roomId" value={roomId} />
-                  
-                  <input 
-                    type="number" 
-                    name="homeScore" 
-                    defaultValue={prediction?.predicted_home_score ?? ''}
-                    disabled={hasStarted || !isEditing}
-                    min="0"
-                    style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
-                  />
-                  <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
-                  <input 
-                    type="number" 
-                    name="awayScore" 
-                    defaultValue={prediction?.predicted_away_score ?? ''}
-                    disabled={hasStarted || !isEditing}
-                    min="0"
-                    style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
-                  />
-                  
-                  {!hasStarted ? (
-                    isEditing ? (
-                      <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
-                        {prediction ? 'Save' : 'Predict'}
-                      </button>
-                    ) : (
-                      <button 
-                        type="button" 
-                        className="btn btn-outline" 
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
-                        onClick={(e) => {
-                          e.preventDefault()
-                          setEditMode(prev => ({ ...prev, [match.id]: true }))
-                        }}
-                      >
-                        Update
-                      </button>
-                    )
-                  ) : (
-                    <span style={{ color: 'var(--color-wimbledon-lime)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                {match.status === 'FINISHED' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem', width: '100%', background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                      Final Score: {match.home_score ?? '-'} - {match.away_score ?? '-'}
+                    </div>
+                    <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                      Your Prediction: {prediction ? `${prediction.predicted_home_score} - ${prediction.predicted_away_score}` : 'None'}
+                    </div>
+                    <div style={{ color: 'var(--color-wimbledon-lime)', fontWeight: 'bold' }}>
                       +{prediction?.points_earned || 0} pts
-                    </span>
-                  )}
-                </form>
+                    </div>
+                  </div>
+                ) : (
+                  <form 
+                    action={async (formData) => {
+                      await submitPrediction(formData)
+                      setEditMode(prev => ({ ...prev, [match.id]: false }))
+                    }} 
+                    style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
+                  >
+                    <input type="hidden" name="matchId" value={match.id} />
+                    <input type="hidden" name="roomId" value={roomId} />
+                    
+                    <input 
+                      type="number" 
+                      name="homeScore" 
+                      defaultValue={prediction?.predicted_home_score ?? ''}
+                      disabled={hasStarted || !isEditing}
+                      min="0"
+                      style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
+                    />
+                    <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    <input 
+                      type="number" 
+                      name="awayScore" 
+                      defaultValue={prediction?.predicted_away_score ?? ''}
+                      disabled={hasStarted || !isEditing}
+                      min="0"
+                      style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
+                    />
+                    
+                    {!hasStarted ? (
+                      isEditing ? (
+                        <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                          {prediction ? 'Save' : 'Predict'}
+                        </button>
+                      ) : (
+                        <button 
+                          type="button" 
+                          className="btn btn-outline" 
+                          style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setEditMode(prev => ({ ...prev, [match.id]: true }))
+                          }}
+                        >
+                          Update
+                        </button>
+                      )
+                    ) : (
+                      <span style={{ color: 'var(--color-wimbledon-lime)', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                        +{prediction?.points_earned || 0} pts
+                      </span>
+                    )}
+                  </form>
+                )}
               </div>
             )
           })}
