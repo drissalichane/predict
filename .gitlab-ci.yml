@@ -1,0 +1,14 @@
+stages:
+  - sync
+
+sync-matches:
+  stage: sync
+  # Use a lightweight image that already has curl installed
+  image: curlimages/curl:latest
+  script:
+    - curl -L -X GET "${PRODUCTION_URL}/api/sync-matches" -H "Authorization: Bearer ${CRON_SECRET}"
+  rules:
+    # Runs when triggered by a pipeline schedule
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    # Runs when manually triggered via the GitLab UI (equivalent to workflow_dispatch)
+    - if: $CI_PIPELINE_SOURCE == "web"
