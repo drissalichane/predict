@@ -10,5 +10,5 @@ jobs:
     steps:
       - name: Trigger Vercel Sync API
         run: |
-          curl -X GET "${{ secrets.PRODUCTION_URL }}/api/sync-matches" \
+          curl -L -X GET "${{ secrets.PRODUCTION_URL }}/api/sync-matches" \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
