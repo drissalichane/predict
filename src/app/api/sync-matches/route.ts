@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'X-Auth-Token': token
       },
+      cache: 'no-store',
       next: { revalidate: 0 }
     })
 
@@ -65,10 +66,7 @@ export async function GET(request: NextRequest) {
       return t ? t.fifa_rank : 100 // default rank 100
     }
 
-    const { data: existingMatches } = await supabaseAdmin.from('matches').select('id')
-    const existingIds = new Set(existingMatches?.map(m => m.id) || [])
-
-    const matchPromises = matches.map((m: any) => {
+    const matchDataList = matches.map((m: any) => {
       const homeName = m.homeTeam.name || 'TBD'
       const awayName = m.awayTeam.name || 'TBD'
 
@@ -83,7 +81,7 @@ export async function GET(request: NextRequest) {
       let oddsAway = Math.max(1.05, 2.8 + (rankDiff * 0.02)).toFixed(2)
       let oddsDraw = Math.max(2.0, 3.5 - (Math.abs(rankDiff) * 0.01)).toFixed(2)
 
-      const matchData = {
+      return {
         id: m.id,
         home_team: homeName,
         away_team: awayName,
@@ -91,31 +89,19 @@ export async function GET(request: NextRequest) {
         away_score: m.score?.fullTime?.away ?? null,
         kickoff_time: m.utcDate,
         status: m.status,
-      }
-
-      updatedCount++;
-
-      if (existingIds.has(m.id)) {
-        // Update with new realistic odds
-        return supabaseAdmin.from('matches').update({
-          ...matchData,
-          odds_home: oddsHome,
-          odds_draw: oddsDraw,
-          odds_away: oddsAway
-        }).eq('id', m.id)
-      } else {
-        // Insert with new mock odds
-        return supabaseAdmin.from('matches').insert({
-          ...matchData,
-          odds_home: oddsHome,
-          odds_draw: oddsDraw,
-          odds_away: oddsAway
-        })
+        odds_home: oddsHome,
+        odds_draw: oddsDraw,
+        odds_away: oddsAway
       }
     })
 
-    // Execute match updates in parallel
-    await Promise.all(matchPromises)
+    const { error: upsertError } = await supabaseAdmin.from('matches').upsert(matchDataList)
+    if (upsertError) {
+      console.error('Matches upsert error:', upsertError)
+      throw new Error(`Failed to upsert matches: ${upsertError.message}`)
+    }
+    
+    updatedCount = matchDataList.length;
 
     // ----------------------------------------------------
     // SCORING ENGINE
