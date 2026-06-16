@@ -6,6 +6,32 @@ import { submitPrediction } from '@/app/room/[id]/actions'
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
 type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
 
+const countryToCode: Record<string, string> = {
+  'Argentina': 'ar', 'France': 'fr', 'Brazil': 'br', 'England': 'gb-eng',
+  'Spain': 'es', 'Portugal': 'pt', 'Netherlands': 'nl', 'Germany': 'de',
+  'Italy': 'it', 'Croatia': 'hr', 'Morocco': 'ma', 'USA': 'us',
+  'United States': 'us', 'Mexico': 'mx', 'Canada': 'ca', 'Japan': 'jp',
+  'Senegal': 'sn', 'Uruguay': 'uy', 'Switzerland': 'ch', 'Colombia': 'co',
+  'Belgium': 'be', 'Ecuador': 'ec', 'Peru': 'pe', 'Chile': 'cl',
+  'Saudi Arabia': 'sa', 'South Korea': 'kr', 'Australia': 'au', 'Iran': 'ir',
+  'Costa Rica': 'cr', 'Wales': 'gb-wls', 'Poland': 'pl', 'Denmark': 'dk',
+  'Serbia': 'rs', 'Cameroon': 'cm', 'Ghana': 'gh', 'Tunisia': 'tn',
+  'Qatar': 'qa', 'Algeria': 'dz', 'Egypt': 'eg', 'Nigeria': 'ng',
+  'Ivory Coast': 'ci', 'Mali': 'ml', 'Burkina Faso': 'bf', 'South Africa': 'za',
+  'Panama': 'pa', 'Jamaica': 'jm', 'Honduras': 'hn', 'El Salvador': 'sv',
+  'New Zealand': 'nz', 'Sweden': 'se', 'Norway': 'no', 'Austria': 'at',
+  'Hungary': 'hu', 'Czech Republic': 'cz', 'Scotland': 'gb-sct', 'Ireland': 'ie',
+  'Greece': 'gr', 'Turkey': 'tr', 'Ukraine': 'ua', 'Romania': 'ro',
+  'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq'
+}
+
+const getFlag = (team: string) => {
+  const code = countryToCode[team]
+  if (!code) return null;
+  /* eslint-disable-next-line @next/next/no-img-element */
+  return <img src={`https://flagcdn.com/24x18/${code}.png`} width="24" height="18" alt={team} style={{ display: 'inline-block', verticalAlign: 'middle', border: '2px solid #000', borderRadius: '4px', marginLeft: '0.5rem', marginRight: '0.5rem' }} />
+}
+
 export default function MatchList({ matches, initialPredictions, roomId }: { matches: Match[], initialPredictions: Prediction[], roomId: string }) {
   const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('round')
   
@@ -85,12 +111,12 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <div>
           {filterMode === 'day' && (
-            <select value={selectedDay} onChange={e => setSelectedDay(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
+            <select value={selectedDay} onChange={e => setSelectedDay(e.target.value)} style={{ marginRight: '0.5rem' }}>
               {days.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
           )}
           {filterMode === 'round' && (
-            <select value={selectedRound} onChange={e => setSelectedRound(e.target.value)} style={{ padding: '0.5rem', borderRadius: 'var(--radius-md)', background: 'var(--color-background)', color: 'white', border: '1px solid var(--color-border)' }}>
+            <select value={selectedRound} onChange={e => setSelectedRound(e.target.value)} style={{ marginRight: '0.5rem' }}>
               {rounds.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           )}
@@ -124,9 +150,9 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}>{match.home_team}</span>
+                  <span style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}>{match.home_team} {getFlag(match.home_team)}</span>
                   <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
-                  <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{match.away_team}</span>
+                  <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{getFlag(match.away_team)} {match.away_team}</span>
                 </div>
 
                 {match.status === 'FINISHED' ? (
@@ -158,16 +184,16 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                       defaultValue={prediction?.predicted_home_score ?? ''}
                       disabled={hasStarted || !isEditing}
                       min="0"
-                      style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
+                      style={{ width: '80px', textAlign: 'center' }} 
                     />
-                    <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem' }}>-</span>
                     <input 
                       type="number" 
                       name="awayScore" 
                       defaultValue={prediction?.predicted_away_score ?? ''}
                       disabled={hasStarted || !isEditing}
                       min="0"
-                      style={{ width: '60px', padding: '0.5rem', textAlign: 'center', background: 'var(--color-background)', border: '1px solid var(--color-border)', color: 'white', borderRadius: 'var(--radius-md)' }} 
+                      style={{ width: '80px', textAlign: 'center' }} 
                     />
                     
                     {!hasStarted ? (

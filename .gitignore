@@ -45,3 +45,6 @@ next-env.d.ts
 /docs/
 /public/
 /scripts/
+
+# pdf
+/pdf-generator/

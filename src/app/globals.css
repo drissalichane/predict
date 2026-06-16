@@ -1,7 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
-
 :root {
-  /* Classic Wimbledon Palette */
+  /* Cinematic Cartoon Palette - Green Accents */
+  --color-primary: #0f172a;
   --color-wimbledon-dark-green: #006030;
   --color-wimbledon-lime: #a3c138;
   --color-wimbledon-purple: #4f2683;
@@ -9,9 +8,7 @@
   --color-wimbledon-wood-light: #c19a6b;
 
   --color-background: #0d1b11;
-  /* Dark greenish black */
   --color-surface: #132719;
-  /* Slightly lighter dark green */
   --color-surface-hover: #1e3b26;
 
   --color-text-primary: #e6f0e9;
@@ -20,16 +17,17 @@
 
   --color-border: #23462d;
 
-  --font-heading: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 24px;
   --radius-pill: 9999px;
 
-  --shadow-glow: 0 4px 20px rgba(163, 193, 56, 0.15);
-  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(163, 193, 56, 0.3);
+  --shadow-card: 6px 6px 0px #000000;
+  /* Hard shadow for cartoonish vibe */
 }
 
 * {
@@ -37,29 +35,29 @@
   padding: 0;
   margin: 0;
   scrollbar-width: thin;
-  scrollbar-color: var(--color-wimbledon-dark-green) var(--color-background);
+  scrollbar-color: var(--color-wimbledon-lime) var(--color-background);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--color-background);
-  border-left: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-wimbledon-dark-green);
+  background: var(--color-wimbledon-lime);
   border-radius: var(--radius-sm);
+  border: 2px solid var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-wimbledon-lime);
+  background: #00ccaa;
 }
-
 
 html,
 body {
@@ -68,6 +66,8 @@ body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 500;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
@@ -76,7 +76,7 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 a:hover {
@@ -90,13 +90,19 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  font-weight: 600;
+  font-weight: 500;
+  font-style: italic;
+  /* Helvetica Medium Italic effect */
   line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8);
 }
 
 h1 {
-  font-size: 3.5rem;
+  font-size: 4rem;
   letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
 /* Utilities */
@@ -124,31 +130,45 @@ h1 {
 
 .text-solid {
   color: var(--color-wimbledon-lime);
+  text-shadow: 0 0 10px rgba(163, 193, 56, 0.6), 2px 2px 0px #000;
 }
 
 .text-purple {
   color: var(--color-wimbledon-purple);
+  text-shadow: 0 0 10px rgba(79, 38, 131, 0.6), 2px 2px 0px #000;
 }
 
 .bg-wood {
   background-color: var(--color-wimbledon-wood);
+  border: 3px solid var(--color-border);
 }
 
 .bg-surface {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 3px solid #000;
   box-shadow: var(--shadow-card);
 }
 
-/* Glassmorphism */
+/* Cinematic / Cartoonish Panels */
 .glass-panel {
-  background: rgba(19, 39, 25, 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(163, 193, 56, 0.1);
+  background: var(--color-surface);
+  border: 3px solid #000;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
 }
 
 @media (min-width: 768px) {
@@ -158,6 +178,10 @@ h1 {
 }
 
 .glass-panel-sm {
+  background: var(--color-surface);
+  border: 3px solid #000;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
   padding: 1.5rem;
 }
 
@@ -170,12 +194,15 @@ h1 {
 .navbar {
   padding: 1rem;
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 3px solid #000;
+  box-shadow: 0 4px 0 #000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  position: relative;
+  z-index: 10;
 }
 
 @media (min-width: 768px) {
@@ -210,75 +237,121 @@ h1 {
   }
 }
 
+/* Forms */
+input,
+select {
+  font-family: var(--font-body);
+  border: 3px solid #000;
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: 4px 4px 0 #000;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  outline: none;
+  font-weight: bold;
+}
+
+input:focus,
+select:focus {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 var(--color-wimbledon-lime);
+  border-color: var(--color-wimbledon-lime);
+}
+
+input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: var(--color-background);
+}
+
+/* Hide native number input spin buttons for a cleaner look */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
 /* Micro-animations */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-glow);
-  background-color: var(--color-surface-hover);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 8px 8px 0px #000;
 }
 
-/* Buttons */
+/* Buttons - Cartoonish */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.5rem;
-  border-radius: 0;
-  font-weight: 500;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-style: italic;
+  text-transform: uppercase;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 3px solid #000;
   outline: none;
   font-family: var(--font-body);
+  box-shadow: 4px 4px 0px #000;
+}
+
+.btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px #000;
 }
 
 .btn-primary {
-  background: var(--color-wimbledon-dark-green);
-  color: #fff;
-  box-shadow: 0 4px 15px rgba(0, 96, 48, 0.3);
+  background: var(--color-wimbledon-lime);
+  color: #000;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(163, 193, 56, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 0px #000;
+  background: #bce254;
 }
 
 .btn-outline {
-  background: transparent;
+  background: var(--color-background);
   color: var(--color-wimbledon-lime);
-  border: 1px solid var(--color-wimbledon-lime);
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
 }
 
 .btn-outline:hover {
-  background: rgba(163, 193, 56, 0.1);
+  background: rgba(0, 255, 204, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 0px #000;
 }
 
 .btn-purple {
   background: var(--color-wimbledon-purple);
   color: #fff;
-  box-shadow: 0 4px 15px rgba(79, 38, 131, 0.3);
 }
 
 .btn-purple:hover {
-  transform: translateY(-2px);
-  background: #3c1c63;
-  box-shadow: 0 6px 20px rgba(79, 38, 131, 0.4);
+  transform: translateY(-4px);
+  background: #ff3399;
+  box-shadow: 6px 6px 0px #000;
 }
 
 .btn-danger {
-  background: #b52a2a;
+  background: #ff2a2a;
   color: #fff;
-  box-shadow: 0 4px 15px rgba(181, 42, 42, 0.3);
 }
 
 .btn-danger:hover {
-  transform: translateY(-2px);
-  background: #992323;
-  box-shadow: 0 6px 20px rgba(181, 42, 42, 0.4);
+  transform: translateY(-4px);
+  background: #ff4d4d;
+  box-shadow: 6px 6px 0px #000;
 }
