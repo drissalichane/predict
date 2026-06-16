@@ -319,6 +319,7 @@ input[type="number"] {
   transform: translateY(-4px);
   box-shadow: 6px 6px 0px #000;
   background: #bce254;
+  color: #000;
 }
 
 .btn-outline {
