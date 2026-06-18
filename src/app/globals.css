@@ -100,9 +100,15 @@ h6 {
 }
 
 h1 {
-  font-size: 4rem;
+  font-size: 2.5rem;
   letter-spacing: -0.02em;
   font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 4rem;
+  }
 }
 
 /* Utilities */
@@ -355,4 +361,46 @@ input[type="number"] {
   transform: translateY(-4px);
   background: #ff4d4d;
   box-shadow: 6px 6px 0px #000;
+}
+
+/* Chat Responsive Layouts */
+.chat-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .chat-container {
+    flex-direction: row;
+  }
+}
+
+.chat-sidebar {
+  width: 100%;
+  border-bottom: 1px solid var(--color-border);
+  border-right: none;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .chat-sidebar {
+    width: 250px;
+    height: 100%;
+    border-bottom: none;
+    border-right: 1px solid var(--color-border);
+  }
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  min-height: 0;
 }

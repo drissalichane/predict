@@ -16,17 +16,14 @@ export default async function ChatPage() {
   }
 
   return (
-    <main className="container main-content" style={{ height: 'calc(100vh - 80px)', padding: '1rem 0' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <div>
-          <Link href="/dashboard" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem', display: 'inline-block' }}>
-            &larr; Back to Dashboard
-          </Link>
-          <h1 className="text-solid">Discussion</h1>
-        </div>
+    <main className="container main-content" style={{ height: '100vh', display: 'flex', flexDirection: 'column', padding: '1rem 0' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <Link href="/dashboard" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', display: 'inline-block' }}>
+          &larr; Back to Dashboard
+        </Link>
       </div>
       
-      <div className="glass-panel" style={{ height: 'calc(100% - 80px)', padding: 0, overflow: 'hidden', display: 'flex' }}>
+      <div className="glass-panel" style={{ flex: 1, padding: 0, overflow: 'hidden', display: 'flex' }}>
         <ChatContainer />
       </div>
     </main>

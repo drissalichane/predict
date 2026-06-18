@@ -71,15 +71,9 @@ export default function ChatContainer({ onClose }: { onClose?: () => void }) {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100%', width: '100%', background: 'var(--color-background)', color: 'var(--color-text-primary)' }}>
+    <div className="chat-container">
       {/* Sidebar / List Area */}
-      <div style={{ 
-        width: '250px', 
-        borderRight: '1px solid var(--color-border)', 
-        display: 'flex', 
-        flexDirection: 'column',
-        background: 'var(--color-surface)'
-      }}>
+      <div className="chat-sidebar">
         <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ fontSize: '1.2rem', margin: 0 }}>Discussions</h2>
           {onClose && (
@@ -179,7 +173,7 @@ export default function ChatContainer({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Main Chat Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--color-background)' }}>
+      <div className="chat-main">
         <div style={{ padding: '1rem', borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
           <h3 style={{ margin: 0, color: 'var(--color-wimbledon-lime)' }}>
             {activeTab === 'channels' 
