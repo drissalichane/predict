@@ -1,18 +1,38 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import ChatContainer from './ChatContainer'
+import { useUnreadMessages } from '@/hooks/useUnreadMessages'
 
 export default function FloatingChatButton() {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
+  const pathname = usePathname()
+  const { unreadCount, markAsRead } = useUnreadMessages()
+
+  const handleToggle = () => {
+    if (!isOpen) {
+      markAsRead()
+    }
+    setIsOpen(!isOpen)
+  }
+
+  // Auto-close if we navigate to the actual chat page
+  useEffect(() => {
+    if (pathname === '/chat' && isOpen) {
+      setIsOpen(false)
+    }
+  }, [pathname, isOpen])
+
+  // Don't show the floating button on the chat page itself
+  if (pathname === '/chat') return null
 
   return (
     <>
       {/* Floating Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         style={{
           position: 'fixed',
           bottom: '2rem',
@@ -34,7 +54,32 @@ export default function FloatingChatButton() {
           transform: isOpen ? 'scale(0.9)' : 'scale(1)'
         }}
       >
-        💬
+        <span style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          {unreadCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-12px',
+              background: '#ff2a2a',
+              color: 'white',
+              fontSize: '0.75rem',
+              fontWeight: 'bold',
+              borderRadius: '50%',
+              minWidth: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0 4px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.5)'
+            }}>
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </span>
       </button>
 
       {/* Backdrop */}

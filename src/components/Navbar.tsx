@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import NavbarMessagesButton from './NavbarMessagesButton'
 
 export default async function Navbar() {
   const supabase = await createClient()
@@ -28,6 +29,7 @@ export default async function Navbar() {
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
         {user ? (
           <>
+            <NavbarMessagesButton />
             <span style={{ 
               color: 'var(--color-surface)', 
               background: 'var(--color-wimbledon-lime)', 
