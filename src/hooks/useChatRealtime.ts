@@ -110,8 +110,8 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, async (payload) => {
         // Fetch sender info for the new message
-        const { data: senderData } = await supabase.from('users').select('display_name').eq('id', payload.new.sender_id).single()
-        const newMsg = { ...payload.new, users: senderData, message_reactions: [] } as ChatMessage
+        const { data: senderData } = await supabase.from('users').select('display_name').eq('id', (payload.new as any).sender_id).single()
+        const newMsg = { ...(payload.new as any), users: senderData, message_reactions: [] } as ChatMessage
         
         setMessages((prev) => {
           // Only add if it belongs to current view
