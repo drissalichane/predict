@@ -97,6 +97,46 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   const [isMounted, setIsMounted] = useState(false)
   useEffect(() => setIsMounted(true), [])
 
+  const [showDailyPopup, setShowDailyPopup] = useState(false)
+
+  // Use America/New_York time but shift everything back by 4 hours.
+  // This creates a "Broadcast Day" where any match between midnight and 3:59 AM
+  // is officially grouped with the previous day's evening matches!
+  const getAmericaDay = (dateVal: string | number | Date) => {
+    const d = new Date(dateVal);
+    d.setHours(d.getHours() - 4);
+    return d.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York'
+    })
+  }
+
+  const todayAmericaString = getAmericaDay(new Date().toISOString())
+  const missingToday = matches.filter(m => {
+    const isToday = getAmericaDay(m.kickoff_time) === todayAmericaString;
+    const hasStarted = isMounted ? new Date(m.kickoff_time).getTime() <= Date.now() : false;
+    const hasPrediction = !!predMap[m.id];
+    return isToday && !hasStarted && !hasPrediction;
+  })
+
+  useEffect(() => {
+    if (!isMounted) return;
+    if (missingToday.length === 0) {
+      setShowDailyPopup(false);
+      return;
+    }
+
+    const storageKey = `lastDailyPopup_${roomId}`;
+    const lastSeenStr = localStorage.getItem(storageKey);
+    const lastSeen = lastSeenStr ? parseInt(lastSeenStr, 10) : 0;
+    const now = Date.now();
+    const FIVE_HOURS = 5 * 60 * 60 * 1000;
+
+    if (now - lastSeen >= FIVE_HOURS) {
+      setShowDailyPopup(true);
+      localStorage.setItem(storageKey, now.toString());
+    }
+  }, [isMounted, roomId, missingToday.length])
+
   return (
     <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -224,6 +264,68 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
               </div>
             )
           })}
+        </div>
+      )}
+
+      {showDailyPopup && missingToday.length > 0 && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(5, 5, 16, 0.9)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Today's Predictions!</h2>
+              <button onClick={() => setShowDailyPopup(false)} className="btn btn-danger" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Close</button>
+            </div>
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+              You have <strong style={{ color: 'var(--color-wimbledon-lime)' }}>{missingToday.length}</strong> match{missingToday.length > 1 ? 'es' : ''} today that you haven't predicted yet. Lock them in before kickoff!
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {missingToday.map((match: Match) => {
+                return (
+                  <div key={`popup-${match.id}`} style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                      <span>{new Date(match.kickoff_time).toLocaleTimeString('en-US', { timeZone: 'Africa/Casablanca', hour: '2-digit', minute: '2-digit' })}</span>
+                      <span>Odds: {match.odds_home} (H) | {match.odds_draw} (D) | {match.odds_away} (A)</span>
+                    </div>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}>{match.home_team} {getFlag(match.home_team)}</span>
+                      <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
+                      <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{getFlag(match.away_team)} {match.away_team}</span>
+                    </div>
+
+                    <form 
+                      action={async (formData) => {
+                        await submitPrediction(formData)
+                      }} 
+                      style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
+                    >
+                      <input type="hidden" name="matchId" value={match.id} />
+                      <input type="hidden" name="roomId" value={roomId} />
+                      
+                      <input 
+                        type="number" 
+                        name="homeScore" 
+                        required
+                        min="0"
+                        style={{ width: '80px', textAlign: 'center' }} 
+                      />
+                      <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem' }}>-</span>
+                      <input 
+                        type="number" 
+                        name="awayScore" 
+                        required
+                        min="0"
+                        style={{ width: '80px', textAlign: 'center' }} 
+                      />
+                      
+                      <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+                        Save
+                      </button>
+                    </form>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>

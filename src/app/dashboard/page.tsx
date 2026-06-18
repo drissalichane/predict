@@ -56,6 +56,15 @@ export default async function DashboardPage() {
         {/* Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
+          {/* Discussion */}
+          <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Global Discussion</h3>
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>Join the global chat rooms or send direct messages.</p>
+            <Link href="/chat" className="btn btn-purple" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
+              Open Chat
+            </Link>
+          </div>
+
           {/* Create Room */}
           <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
             <h3 style={{ marginBottom: '1rem' }}>Create a New Room</h3>
