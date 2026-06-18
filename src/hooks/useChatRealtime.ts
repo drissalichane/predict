@@ -18,7 +18,7 @@ export type ChatMessage = {
   reply_to_id: string | null
   created_at: string
   users?: { display_name: string } // sender info
-  reactions?: MessageReaction[]
+  message_reactions?: MessageReaction[]
 }
 
 export type MessageReaction = {
@@ -131,14 +131,14 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
         if (payload.eventType === 'INSERT') {
           setMessages((prev) => prev.map(msg => {
             if (msg.id === payload.new.message_id) {
-              return { ...msg, message_reactions: [...(msg.reactions || []), payload.new as MessageReaction] }
+              return { ...msg, message_reactions: [...(msg.message_reactions || []), payload.new as MessageReaction] }
             }
             return msg
           }))
         } else if (payload.eventType === 'DELETE') {
           setMessages((prev) => prev.map(msg => {
             if (msg.id === payload.old.message_id) {
-              return { ...msg, message_reactions: (msg.reactions || []).filter(r => r.id !== payload.old.id) }
+              return { ...msg, message_reactions: (msg.message_reactions || []).filter(r => r.id !== payload.old.id) }
             }
             return msg
           }))
