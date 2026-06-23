@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import NavbarMessagesButton from './NavbarMessagesButton'
+import SignOutButton from './SignOutButton'
 
 export default async function Navbar() {
   const supabase = await createClient()
@@ -30,21 +31,21 @@ export default async function Navbar() {
         {user ? (
           <>
             <NavbarMessagesButton />
-            <span style={{ 
+            <Link href={`/profile/${user.id}`} style={{ 
               color: 'var(--color-surface)', 
               background: 'var(--color-wimbledon-lime)', 
               fontWeight: 'bold', 
               padding: '0.25rem 0.75rem', 
               borderRadius: 'var(--radius-md)', 
               marginRight: '1rem',
-              fontSize: '0.85rem'
-            }}>
+              fontSize: '0.85rem',
+              textDecoration: 'none',
+              display: 'inline-block'
+            }} className="hover-lift">
               {displayName}
-            </span>
-            <Link href="/dashboard" style={{ fontSize: '0.9rem' }}>Dashboard</Link>
-            <form action={signOut}>
-              <button className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>Sign Out</button>
-            </form>
+            </Link>
+            <Link href="/dashboard" className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>Dashboard</Link>
+            <SignOutButton signOutAction={signOut} />
           </>
         ) : (
           <Link href="/login" className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}>Sign In</Link>

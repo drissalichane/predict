@@ -292,6 +292,15 @@ input[type="number"] {
   box-shadow: 8px 8px 0px #000;
 }
 
+.hover-underline {
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+  color: var(--color-wimbledon-lime) !important;
+}
+
 /* Buttons - Cartoonish */
 .btn {
   display: inline-flex;

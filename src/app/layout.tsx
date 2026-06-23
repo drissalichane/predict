@@ -3,6 +3,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/Navbar";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import FloatingChatButton from "@/components/chat/FloatingChatButton";
+import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function RootLayout({
         </NavbarWrapper>
         {children}
         <FloatingChatButton />
+        <ScrollToTop />
         <Analytics />
       </body>
     </html>
