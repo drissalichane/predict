@@ -5,10 +5,10 @@ import { useChatRealtime, ChatMessage as ChatMessageType, ChatChannel } from '@/
 import { createChannel, sendMessage, getUsers } from '@/app/chat/actions'
 import ChatMessage from './ChatMessage'
 
-export default function ChatContainer({ onClose }: { onClose?: () => void }) {
-  const [activeTab, setActiveTab] = useState<'channels' | 'dms'>('channels')
+export default function ChatContainer({ onClose, initialDmUserId }: { onClose?: () => void, initialDmUserId?: string }) {
+  const [activeTab, setActiveTab] = useState<'channels' | 'dms'>(initialDmUserId ? 'dms' : 'channels')
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null)
-  const [activeRecipientId, setActiveRecipientId] = useState<string | null>(null)
+  const [activeRecipientId, setActiveRecipientId] = useState<string | null>(initialDmUserId || null)
   const [messageInput, setMessageInput] = useState('')
   const [replyTo, setReplyTo] = useState<ChatMessageType | null>(null)
   const [isCreatingChannel, setIsCreatingChannel] = useState(false)
@@ -22,10 +22,19 @@ export default function ChatContainer({ onClose }: { onClose?: () => void }) {
   useEffect(() => {
     async function fetchUsers() {
       const res = await getUsers()
-      if (res.users) setUsers(res.users)
+      if (res.users) {
+        setUsers(res.users)
+        
+        // If initialDmUserId is set, ensure it is in the users list
+        if (initialDmUserId && !res.users.some(u => u.id === initialDmUserId)) {
+           // We might need to fetch the specific user or at least allow DMing them even if no prior history
+           // But actually if they exist in the DB, we can just add a placeholder for now
+           setUsers([{ id: initialDmUserId, display_name: 'Loading...' }, ...res.users])
+        }
+      }
     }
     fetchUsers()
-  }, [])
+  }, [initialDmUserId])
 
   // Set default channel to "General" if none selected
   useEffect(() => {

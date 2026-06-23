@@ -83,7 +83,7 @@ export default async function RoomPage({
   // Fetch leaderboard
   const { data: members } = await supabase
     .from('room_members')
-    .select('total_points, exact_scores, previous_rank, users(display_name)')
+    .select('user_id, total_points, exact_scores, previous_rank, users(display_name)')
     .eq('room_id', roomId)
     .order('total_points', { ascending: false })
 
@@ -164,7 +164,11 @@ export default async function RoomPage({
                       #{currentRank}
                       {rankChangeIndicator}
                     </td>
-                    <td style={{ padding: '1rem 0' }}>{member.users?.display_name || 'Anonymous'}</td>
+                    <td style={{ padding: '1rem 0' }}>
+                      <Link href={`/profile/${member.user_id}`} style={{ color: 'var(--color-text-primary)', textDecoration: 'none' }} className="hover-underline">
+                        {member.users?.display_name || 'Anonymous'}
+                      </Link>
+                    </td>
                     <td style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                       {member.exact_scores || 0}
                     </td>
