@@ -183,19 +183,86 @@ export async function GET(request: NextRequest) {
       console.log("Updating leaderboards...")
       const { data: allPredictions } = await supabaseAdmin
         .from('predictions')
-        .select('room_id, user_id, points_earned')
+        .select(`
+          room_id, 
+          user_id, 
+          points_earned,
+          predicted_home_score,
+          predicted_away_score,
+          matches ( home_score, away_score, status )
+        `)
 
       if (allPredictions) {
-        const pointsMap = new Map<string, number>()
-        for (const p of allPredictions) {
-          const key = `${p.room_id}_${p.user_id}`
-          pointsMap.set(key, (pointsMap.get(key) || 0) + p.points_earned)
+        // Fetch current members to check if points changed and to save current rank
+        const { data: currentMembers } = await supabaseAdmin
+          .from('room_members')
+          .select('room_id, user_id, total_points, exact_scores')
+          .order('total_points', { ascending: false })
+
+        // Build current ranks per room
+        const roomRanks = new Map<string, string[]>()
+        if (currentMembers) {
+          for (const m of currentMembers) {
+            if (!roomRanks.has(m.room_id)) roomRanks.set(m.room_id, [])
+            roomRanks.get(m.room_id)!.push(m.user_id)
+          }
         }
 
-        const leaderboardPromises = Array.from(pointsMap.entries()).map(([key, totalPoints]) => {
+        const pointsMap = new Map<string, { points: number, exact: number }>()
+        for (const p of allPredictions) {
+          const key = `${p.room_id}_${p.user_id}`
+          const current = pointsMap.get(key) || { points: 0, exact: 0 }
+          
+          let isExact = false;
+          // @ts-ignore
+          if (p.matches && (p.matches.status === 'FINISHED' || process.env.TEST_SCORING === 'true')) {
+             // @ts-ignore
+             if (p.matches.home_score !== null && p.matches.away_score !== null) {
+                // @ts-ignore
+                if (p.predicted_home_score === p.matches.home_score && p.predicted_away_score === p.matches.away_score) {
+                   isExact = true;
+                }
+             }
+          }
+
+          pointsMap.set(key, {
+            points: current.points + p.points_earned,
+            exact: current.exact + (isExact ? 1 : 0)
+          })
+        }
+
+        const roomHasChanges = new Set<string>()
+        
+        for (const [key, data] of pointsMap.entries()) {
           const [roomId, userId] = key.split('_')
+          const member = currentMembers?.find(m => m.room_id === roomId && m.user_id === userId)
+          const currentPoints = member?.total_points || 0
+          const currentExact = member?.exact_scores || 0
+          const newPoints = parseFloat(data.points.toFixed(2))
+          if (currentPoints !== newPoints || currentExact !== data.exact) {
+            roomHasChanges.add(roomId)
+          }
+        }
+
+        const leaderboardPromises = Array.from(pointsMap.entries()).map(([key, data]) => {
+          const [roomId, userId] = key.split('_')
+          const newPoints = parseFloat(data.points.toFixed(2))
+          
+          const updateData: any = { 
+             total_points: newPoints,
+             exact_scores: data.exact
+          }
+
+          if (roomHasChanges.has(roomId)) {
+             // Snapshot current rank before updating
+             const currentRank = (roomRanks.get(roomId)?.indexOf(userId) ?? -1) + 1;
+             if (currentRank > 0) {
+               updateData.previous_rank = currentRank;
+             }
+          }
+
           return supabaseAdmin.from('room_members')
-            .update({ total_points: parseFloat(totalPoints.toFixed(2)) })
+            .update(updateData)
             .eq('room_id', roomId)
             .eq('user_id', userId)
         })

@@ -83,7 +83,7 @@ export default async function RoomPage({
   // Fetch leaderboard
   const { data: members } = await supabase
     .from('room_members')
-    .select('total_points, users(display_name)')
+    .select('total_points, exact_scores, previous_rank, users(display_name)')
     .eq('room_id', roomId)
     .order('total_points', { ascending: false })
 
@@ -139,19 +139,41 @@ export default async function RoomPage({
               <tr style={{ borderBottom: '1px solid var(--color-border)', textAlign: 'left' }}>
                 <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: '500' }}>Rank</th>
                 <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: '500' }}>Player</th>
+                <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: '500', textAlign: 'center' }}>Exact</th>
                 <th style={{ padding: '0.75rem 0', color: 'var(--color-text-secondary)', fontWeight: '500', textAlign: 'right' }}>Points</th>
               </tr>
             </thead>
             <tbody>
-              {members?.map((member: any, idx: number) => (
-                <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <td style={{ padding: '1rem 0', fontWeight: 'bold' }}>#{idx + 1}</td>
-                  <td style={{ padding: '1rem 0' }}>{member.users?.display_name || 'Anonymous'}</td>
-                  <td style={{ padding: '1rem 0', textAlign: 'right', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>
-                    {member.total_points}
-                  </td>
-                </tr>
-              ))}
+              {members?.map((member: any, idx: number) => {
+                const currentRank = idx + 1;
+                const previousRank = member.previous_rank;
+                
+                let rankChangeIndicator = <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem', marginLeft: '0.5rem' }}>-</span>;
+                
+                if (previousRank) {
+                  if (previousRank > currentRank) {
+                     rankChangeIndicator = <span style={{ color: '#4ade80', fontSize: '0.8rem', marginLeft: '0.5rem', display: 'inline-flex', alignItems: 'center', fontWeight: 'normal' }} title={`Up from #${previousRank}`}>↑ {previousRank - currentRank}</span>;
+                  } else if (previousRank < currentRank) {
+                     rankChangeIndicator = <span style={{ color: '#f87171', fontSize: '0.8rem', marginLeft: '0.5rem', display: 'inline-flex', alignItems: 'center', fontWeight: 'normal' }} title={`Down from #${previousRank}`}>↓ {currentRank - previousRank}</span>;
+                  }
+                }
+
+                return (
+                  <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '1rem 0', fontWeight: 'bold' }}>
+                      #{currentRank}
+                      {rankChangeIndicator}
+                    </td>
+                    <td style={{ padding: '1rem 0' }}>{member.users?.display_name || 'Anonymous'}</td>
+                    <td style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                      {member.exact_scores || 0}
+                    </td>
+                    <td style={{ padding: '1rem 0', textAlign: 'right', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>
+                      {member.total_points}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
