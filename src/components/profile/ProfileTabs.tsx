@@ -63,6 +63,17 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
 
   const activeRoom = rooms.find(r => r.id === activeRoomId) || rooms[0]
 
+  const totalMatchesGuessed = activePredictions.length;
+  const correctOutcomes = activePredictions.filter(p => {
+    if (p.matches.home_score === null || p.matches.away_score === null) return false;
+    const actualDiff = p.matches.home_score - p.matches.away_score;
+    const predictedDiff = p.predicted_home_score - p.predicted_away_score;
+    return (actualDiff > 0 && predictedDiff > 0) || (actualDiff < 0 && predictedDiff < 0) || (actualDiff === 0 && predictedDiff === 0);
+  }).length;
+  const predictionsOver20 = activePredictions.filter(p => p.points_earned >= 20).length;
+  const predictionsOver30 = activePredictions.filter(p => p.points_earned >= 30).length;
+  const avgPointsPerGame = totalMatchesGuessed > 0 ? (activeRoom.total_points / totalMatchesGuessed).toFixed(1) : '0';
+
   return (
     <div style={{ marginTop: '2rem' }}>
       <h2 style={{ color: 'var(--color-wimbledon-lime)', marginBottom: '1rem' }}>Past Predictions</h2>
@@ -90,15 +101,57 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
       </div>
 
       {/* Room Stats */}
-      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '2rem', padding: '1rem', background: 'rgba(0,0,0,0.2)', borderRadius: 'var(--radius-md)' }}>
-        <div style={{ flex: 1, minWidth: '120px' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Total Points</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>{activeRoom.total_points}</div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+        
+        {/* Performance Group */}
+        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Performance</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Total Points</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>{activeRoom.total_points}</div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Avg Points / Game</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{avgPointsPerGame}</div>
+            </div>
+          </div>
         </div>
-        <div style={{ flex: 1, minWidth: '120px' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Exact Scores</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{activeRoom.exact_scores}</div>
+
+        {/* Accuracy Group */}
+        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Accuracy</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Total Guessed</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{totalMatchesGuessed}</div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Correct Outcomes</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{correctOutcomes}</div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Exact Scores</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{activeRoom.exact_scores}</div>
+            </div>
+          </div>
         </div>
+
+        {/* High Scores Group */}
+        <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>High Scores</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>20+ Pts</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{predictionsOver20}</div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>30+ Pts</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{predictionsOver30}</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* Predictions List */}

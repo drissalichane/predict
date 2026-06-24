@@ -117,7 +117,7 @@ export default function ChatMessage({
             {senderName}
           </span>
           <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
-            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {new Date(message.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' })} {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
 
