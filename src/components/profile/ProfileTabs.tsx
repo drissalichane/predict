@@ -46,6 +46,51 @@ const getFlag = (team: string) => {
   return <img src={`https://flagcdn.com/24x18/${code}.png`} width="24" height="18" alt={team} style={{ display: 'inline-block', verticalAlign: 'middle', border: '2px solid #000', borderRadius: '4px', marginLeft: '0.5rem', marginRight: '0.5rem' }} />
 }
 
+function StatRow({ label, value, tooltip, color }: { label: string, value: string | number, tooltip: string, color?: string }) {
+  const [isHovered, setIsHovered] = useState(false)
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {label}
+        <div 
+          style={{ position: 'relative', display: 'flex', alignItems: 'center' }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <span style={{ fontSize: '0.7rem', opacity: 0.5, cursor: 'pointer', padding: '2px' }}>ⓘ</span>
+          
+          {isHovered && (
+            <div style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              marginBottom: '4px',
+              background: 'var(--color-surface, #1e1e1e)',
+              border: '1px solid var(--color-border, #333)',
+              padding: '0.5rem 0.75rem',
+              borderRadius: '4px',
+              fontSize: '0.75rem',
+              color: 'var(--color-text-primary, #fff)',
+              width: 'max-content',
+              maxWidth: '220px',
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              zIndex: 50,
+              pointerEvents: 'none',
+              lineHeight: '1.4'
+            }}>
+              {tooltip}
+            </div>
+          )}
+        </div>
+      </div>
+      <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: color || 'white' }}>{value}</div>
+    </div>
+  )
+}
+
 export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], predictions: Prediction[] }) {
   const [activeRoomId, setActiveRoomId] = useState<string>(rooms[0]?.id || '')
 
@@ -107,14 +152,17 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
         <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
           <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Performance</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Total Points</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>{activeRoom.total_points}</div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Avg Points / Game</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{avgPointsPerGame}</div>
-            </div>
+            <StatRow 
+              label="Total Points" 
+              value={activeRoom.total_points} 
+              tooltip="The total number of points earned across all predictions in this room." 
+              color="var(--color-wimbledon-lime)" 
+            />
+            <StatRow 
+              label="Avg Points / Game" 
+              value={avgPointsPerGame} 
+              tooltip="The average number of points earned per prediction made." 
+            />
           </div>
         </div>
 
@@ -122,18 +170,21 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
         <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
           <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Accuracy</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Total Guessed</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{totalMatchesGuessed}</div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Correct Outcomes</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{correctOutcomes}</div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Exact Scores</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{activeRoom.exact_scores}</div>
-            </div>
+            <StatRow 
+              label="Total Guessed" 
+              value={totalMatchesGuessed} 
+              tooltip="The total number of match predictions you have made in this room." 
+            />
+            <StatRow 
+              label="Correct Outcomes" 
+              value={correctOutcomes} 
+              tooltip="The number of times you correctly predicted the winning team or a draw." 
+            />
+            <StatRow 
+              label="Exact Scores" 
+              value={activeRoom.exact_scores} 
+              tooltip="The number of times you predicted the exact final score of a match." 
+            />
           </div>
         </div>
 
@@ -141,14 +192,16 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
         <div style={{ background: 'rgba(0,0,0,0.2)', padding: '1.25rem', borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.05)' }}>
           <h3 style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>High Scores</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>20+ Pts</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{predictionsOver20}</div>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>30+ Pts</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{predictionsOver30}</div>
-            </div>
+            <StatRow 
+              label="20+ Pts" 
+              value={predictionsOver20} 
+              tooltip="The number of predictions where you earned 20 or more points." 
+            />
+            <StatRow 
+              label="30+ Pts" 
+              value={predictionsOver30} 
+              tooltip="The number of predictions where you earned 30 or more points." 
+            />
           </div>
         </div>
 
