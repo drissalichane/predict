@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { submitPrediction } from '@/app/room/[id]/actions'
+import TeamModal from './TeamModal'
 
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
 type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
@@ -34,13 +35,13 @@ const getFlag = (team: string) => {
 
 export default function MatchList({ matches, initialPredictions, roomId }: { matches: Match[], initialPredictions: Prediction[], roomId: string }) {
   const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('round')
-  
+
   const getStage = (dateString: string) => {
     // Subtract 6 hours to convert UTC to approx US ET so late matches fall on the correct day
     const d = new Date(new Date(dateString).getTime() - 6 * 60 * 60 * 1000)
     const month = d.getMonth() + 1
     const day = d.getDate()
-    
+
     if (month === 6 && day <= 27) return 'Group Stage'
     if ((month === 6 && day >= 28) || (month === 7 && day <= 3)) return 'Round of 32'
     if (month === 7 && day >= 4 && day <= 7) return 'Round of 16'
@@ -65,11 +66,11 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
     return `${year}-${month}-${day}`;
   }
 
-  const days = Array.from(new Set(matches.map(m => formatDay(m.kickoff_time)))).sort((a,b) => new Date(a).getTime() - new Date(b).getTime())
+  const days = Array.from(new Set(matches.map(m => formatDay(m.kickoff_time)))).sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
   const roundOrder = ['Group Stage', 'Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals', 'Third-Place Match', 'Final']
   const rounds = Array.from(new Set(matches.map(m => getStage(m.kickoff_time))))
     .sort((a, b) => roundOrder.indexOf(a) - roundOrder.indexOf(b))
-  
+
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
   const [selectedRound, setSelectedRound] = useState(rounds[0] || '')
   const [showPrevious, setShowPrevious] = useState(false)
@@ -98,6 +99,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   useEffect(() => setIsMounted(true), [])
 
   const [showDailyPopup, setShowDailyPopup] = useState(false)
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
 
   // Use America/New_York time but shift everything back by 4 hours.
   // This creates a "Broadcast Day" where any match between midnight and 3:59 AM
@@ -161,18 +163,18 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             </select>
           )}
         </div>
-        <button 
-          type="button" 
-          onClick={() => setShowPrevious(!showPrevious)} 
+        <button
+          type="button"
+          onClick={() => setShowPrevious(!showPrevious)}
           className={`btn ${showPrevious ? 'btn-primary' : 'btn-outline'}`}
           style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
         >
           {showPrevious ? 'Upcoming Games' : 'Previous Games'}
         </button>
       </div>
-      
+
       {!filteredMatches || filteredMatches.length === 0 ? (
-          <p style={{ color: 'var(--color-text-secondary)' }}>No matches found for this filter.</p>
+        <p style={{ color: 'var(--color-text-secondary)' }}>No matches found for this filter.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {filteredMatches.map((match: Match) => {
@@ -180,7 +182,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             const hasStarted = isMounted ? new Date(match.kickoff_time).getTime() <= Date.now() : false
             const isEditing = editMode[match.id] || !prediction
             const isExactScore = prediction && match.status === 'FINISHED' && match.home_score !== null && match.away_score !== null && prediction.predicted_home_score === match.home_score && prediction.predicted_away_score === match.away_score;
-            
+
             return (
               <div key={match.id} style={{ position: 'relative', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
                 {isExactScore && (
@@ -194,11 +196,15 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                   </span>
                   <span>Odds: {match.odds_home} (H) | {match.odds_draw} (D) | {match.odds_away} (A)</span>
                 </div>
-                
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}>{match.home_team} {getFlag(match.home_team)}</span>
+                  <button type="button" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                    {match.home_team} {getFlag(match.home_team)}
+                  </button>
                   <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
-                  <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{getFlag(match.away_team)} {match.away_team}</span>
+                  <button type="button" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                    {getFlag(match.away_team)} {match.away_team}
+                  </button>
                 </div>
 
                 {match.status === 'FINISHED' ? (
@@ -214,43 +220,43 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     </div>
                   </div>
                 ) : (
-                  <form 
+                  <form
                     action={async (formData) => {
                       await submitPrediction(formData)
                       setEditMode(prev => ({ ...prev, [match.id]: false }))
-                    }} 
+                    }}
                     style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
                   >
                     <input type="hidden" name="matchId" value={match.id} />
                     <input type="hidden" name="roomId" value={roomId} />
-                    
-                    <input 
-                      type="number" 
-                      name="homeScore" 
+
+                    <input
+                      type="number"
+                      name="homeScore"
                       defaultValue={prediction?.predicted_home_score ?? ''}
                       disabled={hasStarted || !isEditing}
                       min="0"
-                      style={{ width: '80px', textAlign: 'center' }} 
+                      style={{ width: '80px', textAlign: 'center' }}
                     />
                     <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem' }}>-</span>
-                    <input 
-                      type="number" 
-                      name="awayScore" 
+                    <input
+                      type="number"
+                      name="awayScore"
                       defaultValue={prediction?.predicted_away_score ?? ''}
                       disabled={hasStarted || !isEditing}
                       min="0"
-                      style={{ width: '80px', textAlign: 'center' }} 
+                      style={{ width: '80px', textAlign: 'center' }}
                     />
-                    
+
                     {!hasStarted ? (
                       isEditing ? (
                         <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
                           {prediction ? 'Save' : 'Predict'}
                         </button>
                       ) : (
-                        <button 
-                          type="button" 
-                          className="btn btn-outline" 
+                        <button
+                          type="button"
+                          className="btn btn-outline"
                           style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                           onClick={(e) => {
                             e.preventDefault()
@@ -291,38 +297,42 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                       <span>{new Date(match.kickoff_time).toLocaleTimeString('en-US', { timeZone: 'Africa/Casablanca', hour: '2-digit', minute: '2-digit' })}</span>
                       <span>Odds: {match.odds_home} (H) | {match.odds_draw} (D) | {match.odds_away} (A)</span>
                     </div>
-                    
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ flex: 1, textAlign: 'right', fontWeight: 'bold' }}>{match.home_team} {getFlag(match.home_team)}</span>
+                      <button type="button" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                        {match.home_team} {getFlag(match.home_team)}
+                      </button>
                       <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
-                      <span style={{ flex: 1, textAlign: 'left', fontWeight: 'bold' }}>{getFlag(match.away_team)} {match.away_team}</span>
+                      <button type="button" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                        {getFlag(match.away_team)} {match.away_team}
+                      </button>
                     </div>
 
-                    <form 
+                    <form
                       action={async (formData) => {
                         await submitPrediction(formData)
-                      }} 
+                      }}
                       style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
                     >
                       <input type="hidden" name="matchId" value={match.id} />
                       <input type="hidden" name="roomId" value={roomId} />
-                      
-                      <input 
-                        type="number" 
-                        name="homeScore" 
+
+                      <input
+                        type="number"
+                        name="homeScore"
                         required
                         min="0"
-                        style={{ width: '80px', textAlign: 'center' }} 
+                        style={{ width: '80px', textAlign: 'center' }}
                       />
                       <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem' }}>-</span>
-                      <input 
-                        type="number" 
-                        name="awayScore" 
+                      <input
+                        type="number"
+                        name="awayScore"
                         required
                         min="0"
-                        style={{ width: '80px', textAlign: 'center' }} 
+                        style={{ width: '80px', textAlign: 'center' }}
                       />
-                      
+
                       <button className="btn btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
                         Save
                       </button>
@@ -333,6 +343,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             </div>
           </div>
         </div>
+      )}
+
+      {selectedTeam && (
+        <TeamModal teamName={selectedTeam} matches={matches} onClose={() => setSelectedTeam(null)} />
       )}
     </div>
   )
