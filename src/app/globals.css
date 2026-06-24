@@ -413,3 +413,12 @@ input[type="number"] {
   background: var(--color-surface);
   min-height: 0;
 }
+
+.team-name-hover {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.team-name-hover:hover {
+  color: var(--color-wimbledon-lime) !important;
+  text-shadow: 0 0 8px rgba(163, 193, 56, 0.6);
+}

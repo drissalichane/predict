@@ -24,7 +24,7 @@ const countryToCode: Record<string, string> = {
   'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq',
   'Türkiye': 'tr', 'Czechia': 'cz', 'DR Congo': 'cd', 'Uzbekistan': 'uz',
   'Jordan': 'jo', 'Cape Verde': 'cv', 'Bosnia and Herzegovina': 'ba', 'Haiti': 'ht',
-  'Curaçao': 'cw'
+  'Curaçao': 'cw', 'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba'
 }
 
 const getFlagUrl = (team: string) => {
@@ -46,7 +46,11 @@ export default function TeamModal({ teamName, matches, onClose }: { teamName: st
   const nameAliases: Record<string, string> = {
     'USA': 'United States',
     'Turkey': 'Türkiye',
-    'Czech Republic': 'Czechia'
+    'Czech Republic': 'Czechia',
+    'Congo DR': 'DR Congo',
+    'Cape Verde Islands': 'Cape Verde',
+    'Bosnia': 'Bosnia and Herzegovina',
+    'Curacao': 'Curaçao'
   }
 
   const normalizedName = nameAliases[teamName] || teamName
@@ -54,18 +58,11 @@ export default function TeamModal({ teamName, matches, onClose }: { teamName: st
 
   const teamMatches = matches.filter(m => m.home_team === teamName || m.away_team === teamName).sort((a, b) => new Date(a.kickoff_time).getTime() - new Date(b.kickoff_time).getTime())
 
-  const reverseAliases: Record<string, string> = {
-    'United States': 'USA',
-    'Türkiye': 'Turkey',
-    'Czechia': 'Czech Republic'
-  }
-
   const groupTeams = teamInfo ? teamRankingsData.teams_by_fifa_rank.filter(t => t.group === teamInfo.group).map(t => t.team) : []
-  const groupTeamNamesInMatches = groupTeams.map(t => reverseAliases[t] || t)
 
   type TeamStat = { team: string, played: number, won: number, drawn: number, lost: number, gf: number, ga: number, points: number }
   const groupStats: Record<string, TeamStat> = {}
-  groupTeamNamesInMatches.forEach(t => {
+  groupTeams.forEach(t => {
     groupStats[t] = { team: t, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, points: 0 }
   })
 
@@ -77,10 +74,13 @@ export default function TeamModal({ teamName, matches, onClose }: { teamName: st
   }
 
   matches.forEach(m => {
-    if (isGroupMatch(m) && groupTeamNamesInMatches.includes(m.home_team) && groupTeamNamesInMatches.includes(m.away_team)) {
+    const homeJsonName = nameAliases[m.home_team] || m.home_team;
+    const awayJsonName = nameAliases[m.away_team] || m.away_team;
+    
+    if (isGroupMatch(m) && groupTeams.includes(homeJsonName) && groupTeams.includes(awayJsonName)) {
       if (m.status === 'FINISHED' && m.home_score !== null && m.away_score !== null && m.home_score !== undefined && m.away_score !== undefined) {
-        const h = groupStats[m.home_team]
-        const a = groupStats[m.away_team]
+        const h = groupStats[homeJsonName]
+        const a = groupStats[awayJsonName]
         if (!h || !a) return
         
         h.played++; a.played++;

@@ -23,7 +23,9 @@ const countryToCode: Record<string, string> = {
   'New Zealand': 'nz', 'Sweden': 'se', 'Norway': 'no', 'Austria': 'at',
   'Hungary': 'hu', 'Czech Republic': 'cz', 'Scotland': 'gb-sct', 'Ireland': 'ie',
   'Greece': 'gr', 'Turkey': 'tr', 'Ukraine': 'ua', 'Romania': 'ro',
-  'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq'
+  'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq',
+  'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba',
+  'Curaçao': 'cw', 'Curacao': 'cw', 'Haiti': 'ht'
 }
 
 const getFlag = (team: string) => {
@@ -198,11 +200,11 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <button type="button" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                  <button type="button" className="team-name-hover" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
                     {match.home_team} {getFlag(match.home_team)}
                   </button>
                   <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
-                  <button type="button" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                  <button type="button" className="team-name-hover" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
                     {getFlag(match.away_team)} {match.away_team}
                   </button>
                 </div>
@@ -299,11 +301,11 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <button type="button" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                      <button type="button" className="team-name-hover" onClick={() => setSelectedTeam(match.home_team)} style={{ flex: 1, textAlign: 'right', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', fontFamily: 'inherit', fontSize: 'inherit' }}>
                         {match.home_team} {getFlag(match.home_team)}
                       </button>
                       <span style={{ padding: '0 1rem', color: 'var(--color-text-secondary)' }}>vs</span>
-                      <button type="button" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
+                      <button type="button" className="team-name-hover" onClick={() => setSelectedTeam(match.away_team)} style={{ flex: 1, textAlign: 'left', fontWeight: 'bold', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', fontFamily: 'inherit', fontSize: 'inherit' }}>
                         {getFlag(match.away_team)} {match.away_team}
                       </button>
                     </div>
