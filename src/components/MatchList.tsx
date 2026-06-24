@@ -24,7 +24,7 @@ const countryToCode: Record<string, string> = {
   'Hungary': 'hu', 'Czech Republic': 'cz', 'Scotland': 'gb-sct', 'Ireland': 'ie',
   'Greece': 'gr', 'Turkey': 'tr', 'Ukraine': 'ua', 'Romania': 'ro',
   'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq',
-  'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba',
+  'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba', 'Bosnia-Herzegovina': 'ba',
   'Curaçao': 'cw', 'Curacao': 'cw', 'Haiti': 'ht'
 }
 

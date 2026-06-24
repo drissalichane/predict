@@ -24,7 +24,7 @@ const countryToCode: Record<string, string> = {
   'Paraguay': 'py', 'Venezuela': 've', 'Bolivia': 'bo', 'Iraq': 'iq',
   'Türkiye': 'tr', 'Czechia': 'cz', 'DR Congo': 'cd', 'Uzbekistan': 'uz',
   'Jordan': 'jo', 'Cape Verde': 'cv', 'Bosnia and Herzegovina': 'ba', 'Haiti': 'ht',
-  'Curaçao': 'cw', 'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba'
+  'Curaçao': 'cw', 'Congo DR': 'cd', 'Cape Verde Islands': 'cv', 'Bosnia': 'ba', 'Bosnia-Herzegovina': 'ba'
 }
 
 const getFlagUrl = (team: string) => {
@@ -50,6 +50,7 @@ export default function TeamModal({ teamName, matches, onClose }: { teamName: st
     'Congo DR': 'DR Congo',
     'Cape Verde Islands': 'Cape Verde',
     'Bosnia': 'Bosnia and Herzegovina',
+    'Bosnia-Herzegovina': 'Bosnia and Herzegovina',
     'Curacao': 'Curaçao'
   }
 
