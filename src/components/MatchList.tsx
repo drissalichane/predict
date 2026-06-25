@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { submitPrediction } from '@/app/room/[id]/actions'
 import { getOtherPredictions } from '@/app/profile/actions'
 import TeamModal from './TeamModal'
+import OverallStandingsModal from './OverallStandingsModal'
 
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
 type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
@@ -108,6 +109,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
   const [showDailyPopup, setShowDailyPopup] = useState(false)
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
+  const [showOverallStandings, setShowOverallStandings] = useState(false)
 
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [otherPredictions, setOtherPredictions] = useState<any[]>([])
@@ -153,12 +155,15 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
   return (
     <div className="bg-surface glass-panel-sm" style={{ borderRadius: 'var(--radius-lg)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Matches & Predictions</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button type="button" className={`btn ${filterMode === 'day' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('day')}>By Day</button>
-          <button type="button" className={`btn ${filterMode === 'round' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('round')}>By Round</button>
-          <button type="button" className={`btn ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('all')}>All</button>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: '0 0 1rem 0' }}>Matches & Predictions</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <button type="button" className={`btn ${filterMode === 'day' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('day')}>By Day</button>
+            <button type="button" className={`btn ${filterMode === 'round' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('round')}>By Round</button>
+            <button type="button" className={`btn ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('all')}>All</button>
+          </div>
+          <button type="button" className="btn btn-outline" style={{ padding: '0.5rem', fontSize: '0.8rem', marginLeft: 'auto' }} onClick={() => setShowOverallStandings(true)}>Standings</button>
         </div>
       </div>
 
@@ -387,6 +392,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
       {selectedTeam && (
         <TeamModal teamName={selectedTeam} matches={matches} onClose={() => setSelectedTeam(null)} />
+      )}
+
+      {showOverallStandings && (
+        <OverallStandingsModal matches={matches} onClose={() => setShowOverallStandings(false)} />
       )}
 
       {/* Modal for other predictions */}
