@@ -337,7 +337,7 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
                                          p.predicted_home_score === selectedMatch.home_score && 
                                          p.predicted_away_score === selectedMatch.away_score;
                                          
-                    const isCorrectOutcome = !isExactScore && selectedMatch.home_score !== null && selectedMatch.away_score !== null &&
+                    const isCorrectOutcome = !isExactScore && typeof selectedMatch.home_score === 'number' && typeof selectedMatch.away_score === 'number' &&
                                              Math.sign(p.predicted_home_score - p.predicted_away_score) === Math.sign(selectedMatch.home_score - selectedMatch.away_score);
                                              
                     const scoreColor = (isExactScore || isCorrectOutcome) ? '#81C784' : 'white';
