@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { submitPrediction } from '@/app/room/[id]/actions'
+import { getOtherPredictions } from '@/app/profile/actions'
 import TeamModal from './TeamModal'
 
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
@@ -86,6 +87,11 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
     if (filterMode === 'day') return formatDay(m.kickoff_time) === selectedDay
     if (filterMode === 'round') return getStage(m.kickoff_time) === selectedRound
     return true
+  }).sort((a, b) => {
+    if (showPrevious) {
+      return new Date(b.kickoff_time).getTime() - new Date(a.kickoff_time).getTime()
+    }
+    return new Date(a.kickoff_time).getTime() - new Date(b.kickoff_time).getTime()
   })
 
   // State to track if a match prediction is in edit mode
@@ -102,6 +108,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
   const [showDailyPopup, setShowDailyPopup] = useState(false)
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
+
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
+  const [otherPredictions, setOtherPredictions] = useState<any[]>([])
+  const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
 
   // Use America/New_York time but shift everything back by 4 hours.
   // This creates a "Broadcast Day" where any match between midnight and 3:59 AM
@@ -220,6 +230,34 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     <div style={{ color: 'var(--color-wimbledon-lime)', fontWeight: 'bold' }}>
                       +{prediction?.points_earned || 0} pts
                     </div>
+                    
+                    <button
+                      onClick={async () => {
+                        setSelectedMatch(match)
+                        setIsLoadingPredictions(true)
+                        const res = await getOtherPredictions(match.id, roomId)
+                        if (res?.predictions) {
+                          setOtherPredictions(res.predictions)
+                        }
+                        setIsLoadingPredictions(false)
+                      }}
+                      style={{
+                        background: 'none',
+                        border: '1px solid var(--color-border)',
+                        padding: '0.5rem 1rem',
+                        borderRadius: 'var(--radius-md)',
+                        color: 'var(--color-text-secondary)',
+                        cursor: 'pointer',
+                        fontSize: '0.8rem',
+                        marginTop: '0.5rem',
+                        width: '100%',
+                        maxWidth: '200px'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--color-wimbledon-lime)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-secondary)'; e.currentTarget.style.borderColor = 'var(--color-border)'; }}
+                    >
+                      View Other Predictions
+                    </button>
                   </div>
                 ) : (
                   <form
@@ -349,6 +387,87 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
       {selectedTeam && (
         <TeamModal teamName={selectedTeam} matches={matches} onClose={() => setSelectedTeam(null)} />
+      )}
+
+      {/* Modal for other predictions */}
+      {selectedMatch && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div className="glass-panel" style={{
+            padding: '2rem',
+            width: '100%',
+            maxWidth: '500px',
+            backgroundColor: 'var(--color-surface)',
+            borderRadius: 'var(--radius-lg)',
+            maxHeight: '90vh',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>
+                {selectedMatch.home_team} vs {selectedMatch.away_team}
+              </h3>
+              <button 
+                onClick={() => setSelectedMatch(null)}
+                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.5rem' }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
+              {isLoadingPredictions ? (
+                <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>Loading predictions...</div>
+              ) : otherPredictions.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>No other predictions found.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {otherPredictions.map(p => {
+                    const isExactScore = selectedMatch.home_score !== null && selectedMatch.away_score !== null && 
+                                         p.predicted_home_score === selectedMatch.home_score && 
+                                         p.predicted_away_score === selectedMatch.away_score;
+                                         
+                    const isCorrectOutcome = !isExactScore && selectedMatch.home_score !== null && selectedMatch.away_score !== null &&
+                                             Math.sign(p.predicted_home_score - p.predicted_away_score) === Math.sign(selectedMatch.home_score - selectedMatch.away_score);
+                                             
+                    const scoreColor = (isExactScore || isCorrectOutcome) ? '#81C784' : 'white';
+                    
+                    return (
+                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ fontWeight: 'bold' }}>{p.users?.display_name || 'Unknown'}</div>
+                          {isExactScore && (
+                            <span style={{ background: '#81C784', color: '#000', padding: '0.1rem 0.4rem', borderRadius: '0.5rem', fontSize: '0.65rem', fontWeight: 'bold' }}>★ EXACT</span>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: scoreColor }}>
+                            {p.predicted_home_score} - {p.predicted_away_score}
+                          </div>
+                          <div style={{ color: scoreColor, fontSize: '0.9rem', width: '50px', textAlign: 'right', fontWeight: 'bold' }}>
+                            +{p.points_earned} pts
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

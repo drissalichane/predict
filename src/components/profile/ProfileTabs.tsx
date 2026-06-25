@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getOtherPredictions } from '@/app/profile/actions'
 
 type Room = { id: string, name: string, total_points: number, exact_scores: number }
 type Prediction = {
@@ -93,6 +94,9 @@ function StatRow({ label, value, tooltip, color }: { label: string, value: strin
 
 export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], predictions: Prediction[] }) {
   const [activeRoomId, setActiveRoomId] = useState<string>(rooms[0]?.id || '')
+  const [selectedMatch, setSelectedMatch] = useState<{ id: number, home_team: string, away_team: string, home_score: number | null, away_score: number | null } | null>(null)
+  const [otherPredictions, setOtherPredictions] = useState<any[]>([])
+  const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
 
   if (rooms.length === 0) {
     return (
@@ -249,11 +253,120 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
                     </div>
                   </div>
                 </div>
+
+                <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                  <button
+                    onClick={async () => {
+                      setSelectedMatch(pred.matches)
+                      setIsLoadingPredictions(true)
+                      const res = await getOtherPredictions(pred.matches.id, activeRoomId)
+                      if (res?.predictions) {
+                        setOtherPredictions(res.predictions)
+                      }
+                      setIsLoadingPredictions(false)
+                    }}
+                    style={{
+                      background: 'none',
+                      border: '1px solid var(--color-border)',
+                      padding: '0.5rem 1rem',
+                      borderRadius: 'var(--radius-md)',
+                      color: 'var(--color-text-secondary)',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      width: '100%'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = 'var(--color-wimbledon-lime)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--color-text-secondary)'; e.currentTarget.style.borderColor = 'var(--color-border)'; }}
+                  >
+                    View Other Predictions
+                  </button>
+                </div>
               </div>
             )
           })
         )}
       </div>
+
+      {/* Modal for other predictions */}
+      {selectedMatch && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}>
+          <div className="glass-panel" style={{
+            padding: '2rem',
+            width: '100%',
+            maxWidth: '500px',
+            backgroundColor: 'var(--color-surface)',
+            borderRadius: 'var(--radius-lg)',
+            maxHeight: '90vh',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h3 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>
+                {selectedMatch.home_team} vs {selectedMatch.away_team}
+              </h3>
+              <button 
+                onClick={() => setSelectedMatch(null)}
+                style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '1.5rem' }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem' }}>
+              {isLoadingPredictions ? (
+                <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>Loading predictions...</div>
+              ) : otherPredictions.length === 0 ? (
+                <div style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem' }}>No other predictions found.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {otherPredictions.map(p => {
+                    const isExactScore = selectedMatch.home_score !== null && selectedMatch.away_score !== null && 
+                                         p.predicted_home_score === selectedMatch.home_score && 
+                                         p.predicted_away_score === selectedMatch.away_score;
+                                         
+                    const isCorrectOutcome = !isExactScore && selectedMatch.home_score !== null && selectedMatch.away_score !== null &&
+                                             Math.sign(p.predicted_home_score - p.predicted_away_score) === Math.sign(selectedMatch.home_score - selectedMatch.away_score);
+                                             
+                    const scoreColor = (isExactScore || isCorrectOutcome) ? '#81C784' : 'white';
+                    
+                    return (
+                      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ fontWeight: 'bold' }}>{p.users?.display_name || 'Unknown'}</div>
+                          {isExactScore && (
+                            <span style={{ background: '#81C784', color: '#000', padding: '0.1rem 0.4rem', borderRadius: '0.5rem', fontSize: '0.65rem', fontWeight: 'bold' }}>★ EXACT</span>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: scoreColor }}>
+                            {p.predicted_home_score} - {p.predicted_away_score}
+                          </div>
+                          <div style={{ color: scoreColor, fontSize: '0.9rem', width: '50px', textAlign: 'right', fontWeight: 'bold' }}>
+                            +{p.points_earned} pts
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
