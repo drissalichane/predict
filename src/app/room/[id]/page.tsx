@@ -4,6 +4,7 @@ import Link from 'next/link'
 import MatchList from '@/components/MatchList'
 import LeaveRoomButton from '@/components/LeaveRoomButton'
 import GroupStageModal from '@/components/GroupStageModal'
+import KnockoutTransitionModal from '@/components/KnockoutTransitionModal'
 import { joinRoomById } from '@/app/dashboard/actions'
 
 export default async function RoomPage({
@@ -149,6 +150,7 @@ export default async function RoomPage({
 
   return (
     <main className="container main-content">
+      <KnockoutTransitionModal leaderboard={groupStageLeaderboard} />
       {resolvedSearchParams?.welcome === 'true' && (
         <div style={{ padding: '1rem 1.5rem', background: 'rgba(163, 193, 56, 0.1)', border: '1px solid var(--color-wimbledon-lime)', borderRadius: 'var(--radius-md)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'fadeIn 0.5s ease-out' }}>
           <span style={{ fontSize: '1.5rem' }}>🎉</span>

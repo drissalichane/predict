@@ -4,7 +4,6 @@ import Navbar from "@/components/Navbar";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import FloatingChatButton from "@/components/chat/FloatingChatButton";
 import ScrollToTop from "@/components/ScrollToTop";
-import FeatureDiscoveryModal from "@/components/FeatureDiscoveryModal";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -30,7 +29,6 @@ export default function RootLayout({
           <Navbar />
         </NavbarWrapper>
         {children}
-        <FeatureDiscoveryModal />
         <FloatingChatButton />
         <ScrollToTop />
         <Analytics />
