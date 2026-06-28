@@ -7,7 +7,16 @@ import TeamModal from './TeamModal'
 import OverallStandingsModal from './OverallStandingsModal'
 
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
-type Prediction = { match_id: number, predicted_home_score: number, predicted_away_score: number, points_earned: number }
+type Prediction = { 
+  match_id: number, 
+  predicted_home_score: number, 
+  predicted_away_score: number, 
+  predicted_et_home_score?: number | null,
+  predicted_et_away_score?: number | null,
+  predicted_ps_home_score?: number | null,
+  predicted_ps_away_score?: number | null,
+  points_earned: number 
+}
 
 const countryToCode: Record<string, string> = {
   'Argentina': 'ar', 'France': 'fr', 'Brazil': 'br', 'England': 'gb-eng',
@@ -115,6 +124,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   const [otherPredictions, setOtherPredictions] = useState<any[]>([])
   const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
   const [knockoutDrawMatch, setKnockoutDrawMatch] = useState<{ match: Match, h: number, a: number } | null>(null)
+  const [editKnockoutMatch, setEditKnockoutMatch] = useState<{ match: Match, prediction: Prediction | null } | null>(null)
 
   // Use America/New_York time but shift everything back by 4 hours.
   // This creates a "Broadcast Day" where any match between midnight and 3:59 AM
@@ -233,8 +243,14 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
                       Final Score: {match.home_score ?? '-'} - {match.away_score ?? '-'}
                     </div>
-                    <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                    <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textAlign: 'center' }}>
                       Your Prediction: {prediction ? `${prediction.predicted_home_score} - ${prediction.predicted_away_score}` : 'None'}
+                      {prediction?.predicted_et_home_score != null && (
+                         <div style={{ marginTop: '0.25rem' }}>
+                            ET: {prediction.predicted_et_home_score} - {prediction.predicted_et_away_score}
+                            {prediction?.predicted_ps_home_score != null && ` | Pens: ${prediction.predicted_ps_home_score} - ${prediction.predicted_ps_away_score}`}
+                         </div>
+                      )}
                     </div>
                     <div style={{ color: 'var(--color-wimbledon-lime)', fontWeight: 'bold' }}>
                       +{prediction?.points_earned || 0} pts
@@ -289,23 +305,33 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     <input type="hidden" name="matchId" value={match.id} />
                     <input type="hidden" name="roomId" value={roomId} />
 
-                    <input
-                      type="number"
-                      name="homeScore"
-                      defaultValue={prediction?.predicted_home_score ?? ''}
-                      disabled={hasStarted || !isEditing}
-                      min="0"
-                      style={{ width: '80px', textAlign: 'center' }}
-                    />
-                    <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem' }}>-</span>
-                    <input
-                      type="number"
-                      name="awayScore"
-                      defaultValue={prediction?.predicted_away_score ?? ''}
-                      disabled={hasStarted || !isEditing}
-                      min="0"
-                      style={{ width: '80px', textAlign: 'center' }}
-                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <input
+                          type="number"
+                          name="homeScore"
+                          defaultValue={prediction?.predicted_home_score ?? ''}
+                          disabled={hasStarted || !isEditing}
+                          min="0"
+                          style={{ width: '80px', textAlign: 'center' }}
+                        />
+                        <span style={{ color: 'var(--color-text-secondary)', fontWeight: 'bold', fontSize: '1.2rem', margin: '0 0.5rem' }}>-</span>
+                        <input
+                          type="number"
+                          name="awayScore"
+                          defaultValue={prediction?.predicted_away_score ?? ''}
+                          disabled={hasStarted || !isEditing}
+                          min="0"
+                          style={{ width: '80px', textAlign: 'center' }}
+                        />
+                      </div>
+                      {!isEditing && prediction?.predicted_et_home_score != null && (
+                         <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem', textAlign: 'center' }}>
+                            ET: {prediction.predicted_et_home_score} - {prediction.predicted_et_away_score}
+                            {prediction?.predicted_ps_home_score != null && ` | Pens: ${prediction.predicted_ps_home_score} - ${prediction.predicted_ps_away_score}`}
+                         </div>
+                      )}
+                    </div>
 
                     {!hasStarted ? (
                       isEditing ? (
@@ -319,7 +345,11 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                           style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                           onClick={(e) => {
                             e.preventDefault()
-                            setEditMode(prev => ({ ...prev, [match.id]: true }))
+                            if (getStage(match.kickoff_time) !== 'Group Stage') {
+                              setEditKnockoutMatch({ match, prediction: prediction || null });
+                            } else {
+                              setEditMode(prev => ({ ...prev, [match.id]: true }))
+                            }
                           }}
                         >
                           Update
@@ -420,15 +450,28 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
       )}
 
       {knockoutDrawMatch && (
-        <KnockoutDrawModal
+        <KnockoutEditModal
           match={knockoutDrawMatch.match}
-          h={knockoutDrawMatch.h}
-          a={knockoutDrawMatch.a}
+          initialH={knockoutDrawMatch.h}
+          initialA={knockoutDrawMatch.a}
           roomId={roomId}
           onClose={() => setKnockoutDrawMatch(null)}
           onSuccess={() => {
             setEditMode(prev => ({ ...prev, [knockoutDrawMatch.match.id]: false }))
             setKnockoutDrawMatch(null)
+          }}
+        />
+      )}
+
+      {editKnockoutMatch && (
+        <KnockoutEditModal
+          match={editKnockoutMatch.match}
+          prediction={editKnockoutMatch.prediction}
+          roomId={roomId}
+          onClose={() => setEditKnockoutMatch(null)}
+          onSuccess={() => {
+            setEditMode(prev => ({ ...prev, [editKnockoutMatch.match.id]: false }))
+            setEditKnockoutMatch(null)
           }}
         />
       )}
@@ -521,56 +564,117 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   )
 }
 
-const KnockoutDrawModal = ({ match, h, a, roomId, onClose, onSuccess }: { match: Match, h: number, a: number, roomId: string, onClose: () => void, onSuccess: () => void }) => {
-  const [etH, setEtH] = useState<string>('');
-  const [etA, setEtA] = useState<string>('');
-  const isEtDraw = etH !== '' && etA !== '' && etH === etA;
+const KnockoutEditModal = ({ 
+  match, 
+  initialH, 
+  initialA, 
+  prediction, 
+  roomId, 
+  onClose, 
+  onSuccess 
+}: { 
+  match: Match, 
+  initialH?: number, 
+  initialA?: number, 
+  prediction?: Prediction | null, 
+  roomId: string, 
+  onClose: () => void, 
+  onSuccess: () => void 
+}) => {
+  const [h, setH] = useState<string>(initialH !== undefined ? initialH.toString() : (prediction?.predicted_home_score?.toString() ?? ''));
+  const [a, setA] = useState<string>(initialA !== undefined ? initialA.toString() : (prediction?.predicted_away_score?.toString() ?? ''));
+  
+  const [etH, setEtH] = useState<string>(prediction?.predicted_et_home_score?.toString() ?? '');
+  const [etA, setEtA] = useState<string>(prediction?.predicted_et_away_score?.toString() ?? '');
+  
+  const [psH, setPsH] = useState<string>(prediction?.predicted_ps_home_score?.toString() ?? '');
+  const [psA, setPsA] = useState<string>(prediction?.predicted_ps_away_score?.toString() ?? '');
+
+  const is90MinDraw = h !== '' && a !== '' && h === a;
+  const isEtDraw = is90MinDraw && etH !== '' && etA !== '' && etH === etA;
+  const isPsDraw = isEtDraw && psH !== '' && psA !== '' && psH === psA;
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(5, 5, 16, 0.9)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
       <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Extra Time & Penalties</h2>
+          <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Predict Match Scores</h2>
           <button onClick={onClose} className="btn btn-danger" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Cancel</button>
         </div>
         <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
-          You predicted a draw ({h} - {a}) in 90 minutes. Please predict the Extra Time score.
+          Fill out your predictions below. For knockout matches, you must predict Extra Time and Penalties if the previous stage is a draw.
         </p>
         <form action={async (formData) => {
+          if (!is90MinDraw) {
+            formData.delete('etHomeScore');
+            formData.delete('etAwayScore');
+            formData.delete('psHomeScore');
+            formData.delete('psAwayScore');
+          } else if (!isEtDraw) {
+            formData.delete('psHomeScore');
+            formData.delete('psAwayScore');
+          }
           await submitPrediction(formData);
           onSuccess();
         }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <input type="hidden" name="matchId" value={match.id} />
           <input type="hidden" name="roomId" value={roomId} />
-          <input type="hidden" name="homeScore" value={h} />
-          <input type="hidden" name="awayScore" value={a} />
 
           <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-             <h4 style={{ margin: '0 0 1rem 0' }}>Extra Time Score</h4>
+             <h4 style={{ margin: '0 0 1rem 0' }}>90 Minute Score</h4>
              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
                <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
-               <input type="number" name="etHomeScore" value={etH} onChange={e => setEtH(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
+               <input type="number" name="homeScore" value={h} onChange={e => setH(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
                <span>-</span>
-               <input type="number" name="etAwayScore" value={etA} onChange={e => setEtA(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
+               <input type="number" name="awayScore" value={a} onChange={e => setA(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
                <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
              </div>
           </div>
 
-          {isEtDraw && (
-            <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', animation: 'fadeIn 0.3s ease-out' }}>
-               <h4 style={{ margin: '0 0 1rem 0' }}>Penalty Shootout Score</h4>
-               <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>Extra time is also a draw. Who wins on penalties?</p>
-               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
-                 <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
-                 <input type="number" name="psHomeScore" required min="0" style={{ width: '80px', textAlign: 'center' }} />
-                 <span>-</span>
-                 <input type="number" name="psAwayScore" required min="0" style={{ width: '80px', textAlign: 'center' }} />
-                 <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
-               </div>
+          <div style={{ 
+            padding: '1rem', 
+            background: 'rgba(255,255,255,0.05)', 
+            borderRadius: 'var(--radius-md)', 
+            border: '1px solid var(--color-border)', 
+            opacity: is90MinDraw ? 1 : 0.5,
+            pointerEvents: is90MinDraw ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease'
+          }}>
+             <h4 style={{ margin: '0 0 1rem 0' }}>Extra Time Score</h4>
+             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+               <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
+               <input type="number" name="etHomeScore" value={etH} onChange={e => setEtH(e.target.value)} required={is90MinDraw} min="0" style={{ width: '80px', textAlign: 'center' }} disabled={!is90MinDraw} />
+               <span>-</span>
+               <input type="number" name="etAwayScore" value={etA} onChange={e => setEtA(e.target.value)} required={is90MinDraw} min="0" style={{ width: '80px', textAlign: 'center' }} disabled={!is90MinDraw} />
+               <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
+             </div>
+          </div>
+
+          <div style={{ 
+            padding: '1rem', 
+            background: 'rgba(255,255,255,0.05)', 
+            borderRadius: 'var(--radius-md)', 
+            border: '1px solid var(--color-border)', 
+            opacity: isEtDraw ? 1 : 0.5,
+            pointerEvents: isEtDraw ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease'
+          }}>
+             <h4 style={{ margin: '0 0 1rem 0' }}>Penalty Shootout Score</h4>
+             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+               <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
+               <input type="number" name="psHomeScore" value={psH} onChange={e => setPsH(e.target.value)} required={isEtDraw} min="0" style={{ width: '80px', textAlign: 'center' }} disabled={!isEtDraw} />
+               <span>-</span>
+               <input type="number" name="psAwayScore" value={psA} onChange={e => setPsA(e.target.value)} required={isEtDraw} min="0" style={{ width: '80px', textAlign: 'center' }} disabled={!isEtDraw} />
+               <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
+             </div>
+          </div>
+
+          <button className="btn btn-primary" style={{ padding: '1rem', fontSize: '1rem', marginTop: '1rem', opacity: isPsDraw ? 0.5 : 1 }} disabled={isPsDraw}>Save Complete Prediction</button>
+          {isPsDraw && (
+            <div style={{ color: '#ff4d4f', textAlign: 'center', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              Penalty shootout cannot end in a draw. Please choose a winner.
             </div>
           )}
-
-          <button className="btn btn-primary" style={{ padding: '1rem', fontSize: '1rem', marginTop: '1rem' }}>Save Complete Prediction</button>
         </form>
       </div>
     </div>

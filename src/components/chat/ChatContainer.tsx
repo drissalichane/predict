@@ -16,7 +16,10 @@ export default function ChatContainer({ onClose, initialDmUserId }: { onClose?: 
   const [users, setUsers] = useState<{ id: string, display_name: string }[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  const { messages, channels, isLoading, currentUser } = useChatRealtime(activeChannelId, activeRecipientId)
+  const { messages, channels, isLoading, currentUser, unreadDmCounts } = useChatRealtime(activeChannelId, activeRecipientId)
+
+  const totalUnreadDMs = Object.values(unreadDmCounts || {}).reduce((acc, count) => acc + count, 0)
+
 
   // Fetch users for DMs
   useEffect(() => {
@@ -106,10 +109,19 @@ export default function ChatContainer({ onClose, initialDmUserId }: { onClose?: 
             style={{ 
               flex: 1, padding: '0.5rem', background: 'none', border: 'none', cursor: 'pointer',
               color: activeTab === 'dms' ? 'var(--color-wimbledon-lime)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === 'dms' ? '2px solid var(--color-wimbledon-lime)' : '2px solid transparent'
+              borderBottom: activeTab === 'dms' ? '2px solid var(--color-wimbledon-lime)' : '2px solid transparent',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
             }}
           >
             DMs
+            {totalUnreadDMs > 0 && (
+              <span style={{ 
+                background: 'red', color: 'white', borderRadius: '50%', padding: '0.1rem 0.4rem', 
+                fontSize: '0.75rem', fontWeight: 'bold', minWidth: '1.2rem', textAlign: 'center'
+              }}>
+                {totalUnreadDMs}
+              </span>
+            )}
           </button>
         </div>
 
@@ -161,21 +173,34 @@ export default function ChatContainer({ onClose, initialDmUserId }: { onClose?: 
 
           {activeTab === 'dms' && (
             <>
-              {users.map(user => (
-                <button
-                  key={user.id}
-                  onClick={() => setActiveRecipientId(user.id)}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left', padding: '0.75rem',
-                    background: activeRecipientId === user.id ? 'rgba(163, 193, 56, 0.1)' : 'transparent',
-                    border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                    color: activeRecipientId === user.id ? 'var(--color-wimbledon-lime)' : 'var(--color-text-primary)',
-                    marginBottom: '0.25rem'
-                  }}
-                >
-                  @ {user.display_name}
-                </button>
-              ))}
+              {users.map(user => {
+                const unreadCount = unreadDmCounts[user.id] || 0;
+                const isUnread = unreadCount > 0;
+                
+                return (
+                  <button
+                    key={user.id}
+                    onClick={() => setActiveRecipientId(user.id)}
+                    style={{
+                      display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem',
+                      background: activeRecipientId === user.id ? 'rgba(163, 193, 56, 0.1)' : (isUnread ? 'rgba(255, 0, 0, 0.08)' : 'transparent'),
+                      border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                      color: activeRecipientId === user.id ? 'var(--color-wimbledon-lime)' : 'var(--color-text-primary)',
+                      marginBottom: '0.25rem'
+                    }}
+                  >
+                    <span>@ {user.display_name}</span>
+                    {isUnread && (
+                      <span style={{ 
+                        background: 'red', color: 'white', borderRadius: '50%', padding: '0.1rem 0.4rem', 
+                        fontSize: '0.75rem', fontWeight: 'bold', minWidth: '1.2rem', textAlign: 'center'
+                      }}>
+                        {unreadCount}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </>
           )}
         </div>

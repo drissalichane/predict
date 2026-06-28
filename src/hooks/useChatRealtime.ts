@@ -34,6 +34,8 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
   const [isLoading, setIsLoading] = useState(true)
   const supabase = createClient()
   const [currentUser, setCurrentUser] = useState<string | null>(null)
+  const [unreadDmCounts, setUnreadDmCounts] = useState<Record<string, number>>({})
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -51,6 +53,45 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
     }
     fetchChannels()
   }, [])
+
+  // Initial fetch for unread DMs
+  useEffect(() => {
+    if (!currentUser) return;
+    const fetchUnread = async () => {
+      const { data } = await supabase
+        .from('chat_messages')
+        .select('sender_id, created_at')
+        .is('channel_id', null)
+        .eq('recipient_id', currentUser)
+
+      if (data) {
+        const counts: Record<string, number> = {}
+        data.forEach(msg => {
+          const lastRead = parseInt(localStorage.getItem('chat_last_read_' + msg.sender_id) || '0', 10)
+          const msgTime = new Date(msg.created_at).getTime()
+          if (msgTime > lastRead) {
+            counts[msg.sender_id] = (counts[msg.sender_id] || 0) + 1
+          }
+        })
+        setUnreadDmCounts(counts)
+      }
+    }
+    fetchUnread()
+  }, [currentUser])
+
+  // Auto mark as read for active recipient
+  useEffect(() => {
+    if (activeRecipientId) {
+      localStorage.setItem('chat_last_read_' + activeRecipientId, Date.now().toString())
+      setUnreadDmCounts(prev => {
+        if (prev[activeRecipientId]) {
+          return { ...prev, [activeRecipientId]: 0 }
+        }
+        return prev
+      })
+    }
+  }, [activeRecipientId, messages])
+
 
   // Initial fetch for messages when active context changes
   useEffect(() => {
@@ -109,9 +150,21 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
         setChannels((prev) => [...prev, payload.new as ChatChannel])
       })
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, async (payload) => {
+        const newMsgRaw = payload.new as any
+        
+        // Track unread count for DMs
+        if (!newMsgRaw.channel_id && newMsgRaw.recipient_id === currentUser) {
+          if (activeRecipientId !== newMsgRaw.sender_id) {
+            setUnreadDmCounts(prev => ({
+              ...prev,
+              [newMsgRaw.sender_id]: (prev[newMsgRaw.sender_id] || 0) + 1
+            }))
+          }
+        }
+
         // Fetch sender info for the new message
-        const { data: senderData } = await supabase.from('users').select('display_name').eq('id', (payload.new as any).sender_id).single()
-        const newMsg = { ...(payload.new as any), users: senderData, message_reactions: [] } as ChatMessage
+        const { data: senderData } = await supabase.from('users').select('display_name').eq('id', newMsgRaw.sender_id).single()
+        const newMsg = { ...newMsgRaw, users: senderData, message_reactions: [] } as ChatMessage
         
         setMessages((prev) => {
           // Only add if it belongs to current view
@@ -151,5 +204,5 @@ export function useChatRealtime(activeChannelId: string | null, activeRecipientI
     }
   }, [activeChannelId, activeRecipientId, currentUser])
 
-  return { messages, channels, isLoading, currentUser }
+  return { messages, channels, isLoading, currentUser, unreadDmCounts }
 }

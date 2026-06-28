@@ -9,6 +9,10 @@ type Prediction = {
   room_id: string,
   predicted_home_score: number,
   predicted_away_score: number,
+  predicted_et_home_score?: number | null,
+  predicted_et_away_score?: number | null,
+  predicted_ps_home_score?: number | null,
+  predicted_ps_away_score?: number | null,
   points_earned: number,
   matches: {
     id: number,
@@ -246,11 +250,18 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{pred.matches.home_score ?? '-'} - {pred.matches.away_score ?? '-'}</div>
                   </div>
                   <div style={{ borderLeft: '1px solid var(--color-border)' }}></div>
-                  <div style={{ textAlign: 'center' }}>
+                  <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Prediction</div>
                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: isExactScore ? 'var(--color-wimbledon-lime)' : 'white' }}>
                       {pred.predicted_home_score} - {pred.predicted_away_score}
                     </div>
+                    {pred.predicted_et_home_score != null && (
+                       <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.25rem', textAlign: 'center' }}>
+                          ET: {pred.predicted_et_home_score} - {pred.predicted_et_away_score}
+                          {pred.predicted_ps_home_score != null && <br/>}
+                          {pred.predicted_ps_home_score != null && `Pens: ${pred.predicted_ps_home_score} - ${pred.predicted_ps_away_score}`}
+                       </div>
+                    )}
                   </div>
                 </div>
 
@@ -351,8 +362,16 @@ export default function ProfileTabs({ rooms, predictions }: { rooms: Room[], pre
                           )}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                          <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: scoreColor }}>
-                            {p.predicted_home_score} - {p.predicted_away_score}
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: scoreColor }}>
+                              {p.predicted_home_score} - {p.predicted_away_score}
+                            </div>
+                            {p.predicted_et_home_score != null && (
+                               <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>
+                                  ET: {p.predicted_et_home_score}-{p.predicted_et_away_score}
+                                  {p.predicted_ps_home_score != null && ` | Pens: ${p.predicted_ps_home_score}-${p.predicted_ps_away_score}`}
+                               </div>
+                            )}
                           </div>
                           <div style={{ color: scoreColor, fontSize: '0.9rem', width: '50px', textAlign: 'right', fontWeight: 'bold' }}>
                             +{p.points_earned} pts
