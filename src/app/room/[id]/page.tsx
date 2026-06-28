@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import MatchList from '@/components/MatchList'
 import LeaveRoomButton from '@/components/LeaveRoomButton'
+import GroupStageModal from '@/components/GroupStageModal'
 import { joinRoomById } from '@/app/dashboard/actions'
 
 export default async function RoomPage({
@@ -83,9 +84,9 @@ export default async function RoomPage({
   // Fetch leaderboard
   const { data: members } = await supabase
     .from('room_members')
-    .select('user_id, total_points, exact_scores, previous_rank, users(display_name)')
+    .select('user_id, total_points, exact_scores, knockout_points, knockout_exact_scores, previous_rank, knockout_previous_rank, users(display_name)')
     .eq('room_id', roomId)
-    .order('total_points', { ascending: false })
+    .order('knockout_points', { ascending: false })
 
   // Fetch matches
   const { data: matches } = await supabase
@@ -99,6 +100,52 @@ export default async function RoomPage({
     .select('*')
     .eq('user_id', user.id)
     .eq('room_id', roomId)
+
+  // Fetch all predictions for Group Stage calculation
+  const { data: allPredictions } = await supabase
+    .from('predictions')
+    .select(`
+      user_id,
+      points_earned,
+      predicted_home_score,
+      predicted_away_score,
+      matches!inner ( kickoff_time, home_score, away_score, status )
+    `)
+    .eq('room_id', roomId)
+
+  const groupStageLeaderboard = members?.map((m: any) => {
+    let groupPoints = 0;
+    let groupExact = 0;
+
+    const userPreds = allPredictions?.filter(p => p.user_id === m.user_id) || [];
+    for (const p of userPreds) {
+      const match = p.matches as any;
+      if (!match) continue;
+
+      const d = new Date(new Date(match.kickoff_time).getTime() - 6 * 60 * 60 * 1000)
+      const month = d.getMonth() + 1
+      const day = d.getDate()
+      const isGroupStage = month === 6 && day <= 27
+      
+      if (isGroupStage) {
+        groupPoints += p.points_earned || 0;
+        if (match.status === 'FINISHED' || process.env.TEST_SCORING === 'true') {
+           if (match.home_score !== null && match.away_score !== null) {
+              if (p.predicted_home_score === match.home_score && p.predicted_away_score === match.away_score) {
+                 groupExact += 1;
+              }
+           }
+        }
+      }
+    }
+    
+    return {
+      user_id: m.user_id,
+      display_name: m.users?.display_name || 'Anonymous',
+      points: parseFloat(groupPoints.toFixed(2)),
+      exact: groupExact
+    }
+  }).sort((a, b) => b.points - a.points) || [];
 
   return (
     <main className="container main-content">
@@ -132,7 +179,10 @@ export default async function RoomPage({
         
         {/* Leaderboard */}
         <div className="glass-panel glass-panel-sm sticky-panel">
-          <h2 style={{ marginBottom: '1.5rem', color: 'var(--color-wimbledon-lime)' }}>Leaderboard</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0, lineHeight: 1.1 }}>Knockout Leaderboard</h2>
+            <GroupStageModal leaderboard={groupStageLeaderboard} />
+          </div>
           
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
@@ -146,7 +196,7 @@ export default async function RoomPage({
             <tbody>
               {members?.map((member: any, idx: number) => {
                 const currentRank = idx + 1;
-                const previousRank = member.previous_rank;
+                const previousRank = member.knockout_previous_rank;
                 
                 let rankChangeIndicator = <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem', marginLeft: '0.5rem' }}>-</span>;
                 
@@ -170,10 +220,10 @@ export default async function RoomPage({
                       </Link>
                     </td>
                     <td style={{ padding: '1rem 0', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                      {member.exact_scores || 0}
+                      {member.knockout_exact_scores || 0}
                     </td>
                     <td style={{ padding: '1rem 0', textAlign: 'right', fontWeight: 'bold', color: 'var(--color-wimbledon-lime)' }}>
-                      {member.total_points}
+                      {member.knockout_points || 0}
                     </td>
                   </tr>
                 );

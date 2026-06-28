@@ -11,6 +11,16 @@ export async function submitPrediction(formData: FormData) {
   const homeScore = parseInt(formData.get('homeScore') as string, 10)
   const awayScore = parseInt(formData.get('awayScore') as string, 10)
 
+  const etHomeScoreStr = formData.get('etHomeScore') as string
+  const etAwayScoreStr = formData.get('etAwayScore') as string
+  const psHomeScoreStr = formData.get('psHomeScore') as string
+  const psAwayScoreStr = formData.get('psAwayScore') as string
+
+  const etHomeScore = etHomeScoreStr ? parseInt(etHomeScoreStr, 10) : null
+  const etAwayScore = etAwayScoreStr ? parseInt(etAwayScoreStr, 10) : null
+  const psHomeScore = psHomeScoreStr ? parseInt(psHomeScoreStr, 10) : null
+  const psAwayScore = psAwayScoreStr ? parseInt(psAwayScoreStr, 10) : null
+
   if (isNaN(matchId) || !roomId || isNaN(homeScore) || isNaN(awayScore)) {
     return { error: 'Invalid input' }
   }
@@ -54,7 +64,11 @@ export async function submitPrediction(formData: FormData) {
       match_id: matchId,
       room_id: roomId,
       predicted_home_score: homeScore,
-      predicted_away_score: awayScore
+      predicted_away_score: awayScore,
+      predicted_et_home_score: etHomeScore,
+      predicted_et_away_score: etAwayScore,
+      predicted_ps_home_score: psHomeScore,
+      predicted_ps_away_score: psAwayScore
     }, {
       onConflict: 'user_id,match_id,room_id'
     })

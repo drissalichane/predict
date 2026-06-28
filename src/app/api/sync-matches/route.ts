@@ -91,7 +91,12 @@ export async function GET(request: NextRequest) {
         status: m.status,
         odds_home: oddsHome,
         odds_draw: oddsDraw,
-        odds_away: oddsAway
+        odds_away: oddsAway,
+        duration: m.score?.duration || 'REGULAR',
+        et_home_score: m.score?.extraTime?.home ?? null,
+        et_away_score: m.score?.extraTime?.away ?? null,
+        ps_home_score: m.score?.penalties?.home ?? null,
+        ps_away_score: m.score?.penalties?.away ?? null
       }
     })
 
@@ -112,7 +117,7 @@ export async function GET(request: NextRequest) {
     // 1. Fetch matches that are finished
     const { data: finishedMatches } = await supabaseAdmin
       .from('matches')
-      .select('id, home_score, away_score, odds_home, odds_draw, odds_away, status')
+      .select('id, home_score, away_score, odds_home, odds_draw, odds_away, status, duration, et_home_score, et_away_score, ps_home_score, ps_away_score')
       .in('status', scoreStatus)
 
     if (finishedMatches && finishedMatches.length > 0) {
@@ -138,7 +143,7 @@ export async function GET(request: NextRequest) {
         // Fetch predictions for this match
         const { data: predictions } = await supabaseAdmin
           .from('predictions')
-          .select('id, predicted_home_score, predicted_away_score, points_earned')
+          .select('id, predicted_home_score, predicted_away_score, points_earned, predicted_et_home_score, predicted_et_away_score, predicted_ps_home_score, predicted_ps_away_score')
           .eq('match_id', fm.id)
 
         if (!predictions) continue
@@ -165,7 +170,44 @@ export async function GET(request: NextRequest) {
           if (ph > pa) multiplier = fm.odds_home
           if (ph < pa) multiplier = fm.odds_away
 
-          const pointsEarned = parseFloat((basePoints * multiplier).toFixed(2))
+          let pointsEarned = parseFloat((basePoints * multiplier).toFixed(2))
+
+          // ET Bonus
+          if ((fm.duration === 'EXTRA_TIME' || fm.duration === 'PENALTY_SHOOTOUT') && ph === pa) {
+            const petH = pred.predicted_et_home_score;
+            const petA = pred.predicted_et_away_score;
+            const aetH = fm.et_home_score;
+            const aetA = fm.et_away_score;
+
+            if (petH !== null && petA !== null && aetH !== null && aetA !== null) {
+              if (petH === aetH && petA === aetA) {
+                pointsEarned += parseFloat((5.0 * fm.odds_draw).toFixed(2))
+              } else if ((petH > petA && aetH > aetA) || (petH < petA && aetH < aetA) || (petH === petA && aetH === aetA)) {
+                pointsEarned += parseFloat((2.5 * fm.odds_draw).toFixed(2))
+              }
+            }
+          }
+
+          // PS Bonus
+          if (fm.duration === 'PENALTY_SHOOTOUT' && ph === pa) {
+            const petH = pred.predicted_et_home_score;
+            const petA = pred.predicted_et_away_score;
+            const ppsH = pred.predicted_ps_home_score;
+            const ppsA = pred.predicted_ps_away_score;
+            const apsH = fm.ps_home_score;
+            const apsA = fm.ps_away_score;
+            
+            // Only reward if they also predicted a draw in ET
+            if (petH === petA && ppsH !== null && ppsA !== null && apsH !== null && apsA !== null) {
+              if (ppsH === apsH && ppsA === apsA) {
+                pointsEarned += parseFloat((5.0 * fm.odds_draw).toFixed(2))
+              } else if ((ppsH > ppsA && apsH > apsA) || (ppsH < ppsA && apsH < apsA)) {
+                pointsEarned += parseFloat((2.5 * fm.odds_draw).toFixed(2))
+              }
+            }
+          }
+
+          pointsEarned = parseFloat(pointsEarned.toFixed(2))
 
           // Update if changed
           if (pred.points_earned !== pointsEarned) {
@@ -189,45 +231,77 @@ export async function GET(request: NextRequest) {
           points_earned,
           predicted_home_score,
           predicted_away_score,
-          matches ( home_score, away_score, status )
+          matches ( home_score, away_score, status, kickoff_time )
         `)
 
       if (allPredictions) {
         // Fetch current members to check if points changed and to save current rank
         const { data: currentMembers } = await supabaseAdmin
           .from('room_members')
-          .select('room_id, user_id, total_points, exact_scores')
-          .order('total_points', { ascending: false })
+          .select('room_id, user_id, total_points, exact_scores, knockout_points, knockout_exact_scores')
 
         // Build current ranks per room
         const roomRanks = new Map<string, string[]>()
+        const knockoutRoomRanks = new Map<string, string[]>()
+        const pointsMap = new Map<string, { totalPoints: number, totalExact: number, knockoutPoints: number, knockoutExact: number }>()
+        
         if (currentMembers) {
-          for (const m of currentMembers) {
+          // Sort for total points
+          const sortedTotal = [...currentMembers].sort((a, b) => (b.total_points || 0) - (a.total_points || 0));
+          for (const m of sortedTotal) {
             if (!roomRanks.has(m.room_id)) roomRanks.set(m.room_id, [])
             roomRanks.get(m.room_id)!.push(m.user_id)
+            
+            // Initialize everyone to 0 points
+            pointsMap.set(`${m.room_id}_${m.user_id}`, { totalPoints: 0, totalExact: 0, knockoutPoints: 0, knockoutExact: 0 })
+          }
+
+          // Sort for knockout points
+          const sortedKnockout = [...currentMembers].sort((a, b) => (b.knockout_points || 0) - (a.knockout_points || 0));
+          for (const m of sortedKnockout) {
+            if (!knockoutRoomRanks.has(m.room_id)) knockoutRoomRanks.set(m.room_id, [])
+            knockoutRoomRanks.get(m.room_id)!.push(m.user_id)
           }
         }
 
-        const pointsMap = new Map<string, { points: number, exact: number }>()
         for (const p of allPredictions) {
+          const m: any = p.matches;
+          if (!m) continue;
+
+          // Calculate if this is a group stage match
+          const d = new Date(new Date(m.kickoff_time).getTime() - 6 * 60 * 60 * 1000)
+          const month = d.getMonth() + 1
+          const day = d.getDate()
+          const isGroupStage = month === 6 && day <= 27
+
           const key = `${p.room_id}_${p.user_id}`
-          const current = pointsMap.get(key) || { points: 0, exact: 0 }
+          const current = pointsMap.get(key) || { totalPoints: 0, totalExact: 0, knockoutPoints: 0, knockoutExact: 0 }
           
           let isExact = false;
-          // @ts-ignore
-          if (p.matches && (p.matches.status === 'FINISHED' || process.env.TEST_SCORING === 'true')) {
-             // @ts-ignore
-             if (p.matches.home_score !== null && p.matches.away_score !== null) {
-                // @ts-ignore
-                if (p.predicted_home_score === p.matches.home_score && p.predicted_away_score === p.matches.away_score) {
+          if (m.status === 'FINISHED' || process.env.TEST_SCORING === 'true') {
+             if (m.home_score !== null && m.away_score !== null) {
+                if (p.predicted_home_score === m.home_score && p.predicted_away_score === m.away_score) {
                    isExact = true;
                 }
              }
           }
 
+          const newTotalPoints = current.totalPoints + p.points_earned;
+          const newTotalExact = current.totalExact + (isExact ? 1 : 0);
+          
+          let newKnockoutPoints = current.knockoutPoints;
+          let newKnockoutExact = current.knockoutExact;
+
+          if (!isGroupStage) {
+             newKnockoutPoints += p.points_earned;
+             newKnockoutExact += (isExact ? 1 : 0);
+          }
+
           pointsMap.set(key, {
-            points: current.points + p.points_earned,
-            exact: current.exact + (isExact ? 1 : 0)
+            totalPoints: newTotalPoints,
+            totalExact: newTotalExact,
+            knockoutPoints: newKnockoutPoints,
+            knockoutExact: newKnockoutExact
           })
         }
 
@@ -236,21 +310,29 @@ export async function GET(request: NextRequest) {
         for (const [key, data] of pointsMap.entries()) {
           const [roomId, userId] = key.split('_')
           const member = currentMembers?.find(m => m.room_id === roomId && m.user_id === userId)
-          const currentPoints = member?.total_points || 0
+          const currentTotal = member?.total_points || 0
           const currentExact = member?.exact_scores || 0
-          const newPoints = parseFloat(data.points.toFixed(2))
-          if (currentPoints !== newPoints || currentExact !== data.exact) {
+          const currentKo = member?.knockout_points || 0
+          const currentKoExact = member?.knockout_exact_scores || 0
+
+          const newTotal = parseFloat(data.totalPoints.toFixed(2))
+          const newKo = parseFloat(data.knockoutPoints.toFixed(2))
+
+          if (currentTotal !== newTotal || currentExact !== data.totalExact || currentKo !== newKo || currentKoExact !== data.knockoutExact) {
             roomHasChanges.add(roomId)
           }
         }
 
         const leaderboardPromises = Array.from(pointsMap.entries()).map(([key, data]) => {
           const [roomId, userId] = key.split('_')
-          const newPoints = parseFloat(data.points.toFixed(2))
+          const newTotal = parseFloat(data.totalPoints.toFixed(2))
+          const newKo = parseFloat(data.knockoutPoints.toFixed(2))
           
           const updateData: any = { 
-             total_points: newPoints,
-             exact_scores: data.exact
+             total_points: newTotal,
+             exact_scores: data.totalExact,
+             knockout_points: newKo,
+             knockout_exact_scores: data.knockoutExact
           }
 
           if (roomHasChanges.has(roomId)) {
@@ -258,6 +340,10 @@ export async function GET(request: NextRequest) {
              const currentRank = (roomRanks.get(roomId)?.indexOf(userId) ?? -1) + 1;
              if (currentRank > 0) {
                updateData.previous_rank = currentRank;
+             }
+             const currentKoRank = (knockoutRoomRanks.get(roomId)?.indexOf(userId) ?? -1) + 1;
+             if (currentKoRank > 0) {
+               updateData.knockout_previous_rank = currentKoRank;
              }
           }
 

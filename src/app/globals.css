@@ -226,7 +226,13 @@ h1 {
 
 @media (min-width: 768px) {
   .room-grid {
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 380px 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .room-grid {
+    grid-template-columns: 420px 1fr;
   }
 }
 

@@ -76,7 +76,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
     .sort((a, b) => roundOrder.indexOf(a) - roundOrder.indexOf(b))
 
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
-  const [selectedRound, setSelectedRound] = useState(rounds[0] || '')
+  const [selectedRound, setSelectedRound] = useState(rounds.includes('Round of 32') ? 'Round of 32' : rounds[0] || '')
   const [showPrevious, setShowPrevious] = useState(false)
 
   const filteredMatches = matches.filter(m => {
@@ -114,6 +114,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [otherPredictions, setOtherPredictions] = useState<any[]>([])
   const [isLoadingPredictions, setIsLoadingPredictions] = useState(false)
+  const [knockoutDrawMatch, setKnockoutDrawMatch] = useState<{ match: Match, h: number, a: number } | null>(null)
 
   // Use America/New_York time but shift everything back by 4 hours.
   // This creates a "Broadcast Day" where any match between midnight and 3:59 AM
@@ -164,6 +165,9 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             <button type="button" className={`btn ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('all')}>All</button>
           </div>
           <button type="button" className="btn btn-outline" style={{ padding: '0.5rem', fontSize: '0.8rem', marginLeft: 'auto' }} onClick={() => setShowOverallStandings(true)}>Standings</button>
+        </div>
+        <div style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+          <strong style={{ color: 'var(--color-wimbledon-lime)' }}>Note:</strong> All primary score predictions are for the <strong>90-minute regulation time</strong>. If you predict a draw for a Knockout Stage match, you will be prompted to predict the Extra Time and Penalty scores.
         </div>
       </div>
 
@@ -267,6 +271,16 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                 ) : (
                   <form
                     action={async (formData) => {
+                      const hStr = formData.get('homeScore') as string;
+                      const aStr = formData.get('awayScore') as string;
+                      if (hStr && aStr) {
+                        const h = parseInt(hStr, 10);
+                        const a = parseInt(aStr, 10);
+                        if (getStage(match.kickoff_time) !== 'Group Stage' && h === a && !formData.get('etHomeScore')) {
+                          setKnockoutDrawMatch({ match, h, a });
+                          return;
+                        }
+                      }
                       await submitPrediction(formData)
                       setEditMode(prev => ({ ...prev, [match.id]: false }))
                     }}
@@ -355,6 +369,17 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
                     <form
                       action={async (formData) => {
+                        const hStr = formData.get('homeScore') as string;
+                        const aStr = formData.get('awayScore') as string;
+                        if (hStr && aStr) {
+                          const h = parseInt(hStr, 10);
+                          const a = parseInt(aStr, 10);
+                          if (getStage(match.kickoff_time) !== 'Group Stage' && h === a && !formData.get('etHomeScore')) {
+                            setKnockoutDrawMatch({ match, h, a });
+                            setShowDailyPopup(false);
+                            return;
+                          }
+                        }
                         await submitPrediction(formData)
                       }}
                       style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', alignItems: 'center', flexWrap: 'wrap' }}
@@ -392,6 +417,20 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
       {selectedTeam && (
         <TeamModal teamName={selectedTeam} matches={matches} onClose={() => setSelectedTeam(null)} />
+      )}
+
+      {knockoutDrawMatch && (
+        <KnockoutDrawModal
+          match={knockoutDrawMatch.match}
+          h={knockoutDrawMatch.h}
+          a={knockoutDrawMatch.a}
+          roomId={roomId}
+          onClose={() => setKnockoutDrawMatch(null)}
+          onSuccess={() => {
+            setEditMode(prev => ({ ...prev, [knockoutDrawMatch.match.id]: false }))
+            setKnockoutDrawMatch(null)
+          }}
+        />
       )}
 
       {showOverallStandings && (
@@ -478,6 +517,62 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+const KnockoutDrawModal = ({ match, h, a, roomId, onClose, onSuccess }: { match: Match, h: number, a: number, roomId: string, onClose: () => void, onSuccess: () => void }) => {
+  const [etH, setEtH] = useState<string>('');
+  const [etA, setEtA] = useState<string>('');
+  const isEtDraw = etH !== '' && etA !== '' && etH === etA;
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(5, 5, 16, 0.9)', zIndex: 50, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem', backdropFilter: 'blur(4px)' }}>
+      <div className="glass-panel" style={{ width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0 }}>Extra Time & Penalties</h2>
+          <button onClick={onClose} className="btn btn-danger" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Cancel</button>
+        </div>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
+          You predicted a draw ({h} - {a}) in 90 minutes. Please predict the Extra Time score.
+        </p>
+        <form action={async (formData) => {
+          await submitPrediction(formData);
+          onSuccess();
+        }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <input type="hidden" name="matchId" value={match.id} />
+          <input type="hidden" name="roomId" value={roomId} />
+          <input type="hidden" name="homeScore" value={h} />
+          <input type="hidden" name="awayScore" value={a} />
+
+          <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
+             <h4 style={{ margin: '0 0 1rem 0' }}>Extra Time Score</h4>
+             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+               <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
+               <input type="number" name="etHomeScore" value={etH} onChange={e => setEtH(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
+               <span>-</span>
+               <input type="number" name="etAwayScore" value={etA} onChange={e => setEtA(e.target.value)} required min="0" style={{ width: '80px', textAlign: 'center' }} />
+               <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
+             </div>
+          </div>
+
+          {isEtDraw && (
+            <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', animation: 'fadeIn 0.3s ease-out' }}>
+               <h4 style={{ margin: '0 0 1rem 0' }}>Penalty Shootout Score</h4>
+               <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '1rem' }}>Extra time is also a draw. Who wins on penalties?</p>
+               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+                 <div style={{ flex: 1, textAlign: 'right' }}>{match.home_team}</div>
+                 <input type="number" name="psHomeScore" required min="0" style={{ width: '80px', textAlign: 'center' }} />
+                 <span>-</span>
+                 <input type="number" name="psAwayScore" required min="0" style={{ width: '80px', textAlign: 'center' }} />
+                 <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
+               </div>
+            </div>
+          )}
+
+          <button className="btn btn-primary" style={{ padding: '1rem', fontSize: '1rem', marginTop: '1rem' }}>Save Complete Prediction</button>
+        </form>
+      </div>
     </div>
   )
 }
