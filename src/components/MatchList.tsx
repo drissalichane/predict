@@ -6,7 +6,7 @@ import { getOtherPredictions } from '@/app/profile/actions'
 import TeamModal from './TeamModal'
 import OverallStandingsModal from './OverallStandingsModal'
 
-type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null }
+type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null, duration?: string, et_home_score?: number | null, et_away_score?: number | null, ps_home_score?: number | null, ps_away_score?: number | null }
 type Prediction = { 
   match_id: number, 
   predicted_home_score: number, 
@@ -243,6 +243,12 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
                       Final Score: {match.home_score ?? '-'} - {match.away_score ?? '-'}
                     </div>
+                    {(match.duration === 'EXTRA_TIME' || match.duration === 'PENALTY_SHOOTOUT') && (
+                      <div style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', fontWeight: 'bold' }}>
+                        ET: {match.et_home_score ?? '-'} - {match.et_away_score ?? '-'}
+                        {match.duration === 'PENALTY_SHOOTOUT' && ` | Pens: ${match.ps_home_score ?? '-'} - ${match.ps_away_score ?? '-'}`}
+                      </div>
+                    )}
                     <div style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textAlign: 'center' }}>
                       Your Prediction: {prediction ? `${prediction.predicted_home_score} - ${prediction.predicted_away_score}` : 'None'}
                       {prediction?.predicted_et_home_score != null && (
