@@ -81,18 +81,40 @@ export async function GET(request: NextRequest) {
       let oddsAway = Math.max(1.05, 2.8 + (rankDiff * 0.02)).toFixed(2)
       let oddsDraw = Math.max(2.0, 3.5 - (Math.abs(rankDiff) * 0.01)).toFixed(2)
 
+      let inferredDuration = m.score?.duration || 'REGULAR';
+      if (m.score?.penalties?.home != null) {
+        inferredDuration = 'PENALTY_SHOOTOUT';
+      } else if (m.score?.extraTime?.home != null) {
+        inferredDuration = 'EXTRA_TIME';
+      }
+
+      let homeScore = m.score?.regularTime?.home;
+      let awayScore = m.score?.regularTime?.away;
+
+      if (homeScore === null || homeScore === undefined || awayScore === null || awayScore === undefined) {
+        if ((inferredDuration === 'EXTRA_TIME' || inferredDuration === 'PENALTY_SHOOTOUT') &&
+            m.score?.fullTime?.home !== undefined && m.score?.fullTime?.home !== null &&
+            m.score?.extraTime?.home !== undefined && m.score?.extraTime?.home !== null) {
+          homeScore = m.score.fullTime.home - m.score.extraTime.home;
+          awayScore = m.score.fullTime.away - m.score.extraTime.away;
+        } else {
+          homeScore = m.score?.fullTime?.home ?? null;
+          awayScore = m.score?.fullTime?.away ?? null;
+        }
+      }
+
       return {
         id: m.id,
         home_team: homeName,
         away_team: awayName,
-        home_score: m.score?.regularTime?.home ?? m.score?.fullTime?.home ?? null,
-        away_score: m.score?.regularTime?.away ?? m.score?.fullTime?.away ?? null,
+        home_score: homeScore,
+        away_score: awayScore,
         kickoff_time: m.utcDate,
         status: m.status,
         odds_home: oddsHome,
         odds_draw: oddsDraw,
         odds_away: oddsAway,
-        duration: m.score?.duration || 'REGULAR',
+        duration: inferredDuration,
         et_home_score: m.score?.extraTime?.home ?? null,
         et_away_score: m.score?.extraTime?.away ?? null,
         ps_home_score: m.score?.penalties?.home ?? null,
@@ -180,10 +202,14 @@ export async function GET(request: NextRequest) {
             const aetA = fm.et_away_score;
 
             if (petH !== null && petA !== null && aetH !== null && aetA !== null) {
+              let etMultiplier = fm.odds_draw;
+              if (petH > petA) etMultiplier = fm.odds_home;
+              if (petH < petA) etMultiplier = fm.odds_away;
+
               if (petH === aetH && petA === aetA) {
-                pointsEarned += parseFloat((5.0 * fm.odds_draw).toFixed(2))
+                pointsEarned += parseFloat((5.0 * etMultiplier).toFixed(2))
               } else if ((petH > petA && aetH > aetA) || (petH < petA && aetH < aetA) || (petH === petA && aetH === aetA)) {
-                pointsEarned += parseFloat((2.5 * fm.odds_draw).toFixed(2))
+                pointsEarned += parseFloat((2.5 * etMultiplier).toFixed(2))
               }
             }
           }
@@ -199,10 +225,14 @@ export async function GET(request: NextRequest) {
             
             // Only reward if they also predicted a draw in ET
             if (petH === petA && ppsH !== null && ppsA !== null && apsH !== null && apsA !== null) {
+              let psMultiplier = fm.odds_draw;
+              if (ppsH > ppsA) psMultiplier = fm.odds_home;
+              if (ppsH < ppsA) psMultiplier = fm.odds_away;
+
               if (ppsH === apsH && ppsA === apsA) {
-                pointsEarned += parseFloat((5.0 * fm.odds_draw).toFixed(2))
+                pointsEarned += parseFloat((5.0 * psMultiplier).toFixed(2))
               } else if ((ppsH > ppsA && apsH > apsA) || (ppsH < ppsA && apsH < apsA)) {
-                pointsEarned += parseFloat((2.5 * fm.odds_draw).toFixed(2))
+                pointsEarned += parseFloat((2.5 * psMultiplier).toFixed(2))
               }
             }
           }
