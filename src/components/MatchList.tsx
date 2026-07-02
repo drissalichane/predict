@@ -213,14 +213,28 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             const hasStarted = isMounted ? new Date(match.kickoff_time).getTime() <= Date.now() : false
             const isEditing = editMode[match.id] || !prediction
             const isExactScore = prediction && match.status === 'FINISHED' && match.home_score !== null && match.away_score !== null && prediction.predicted_home_score === match.home_score && prediction.predicted_away_score === match.away_score;
+            const isExactET = prediction && match.status === 'FINISHED' && (match.duration === 'EXTRA_TIME' || match.duration === 'PENALTY_SHOOTOUT') && match.et_home_score !== null && match.et_away_score !== null && prediction.predicted_et_home_score === match.et_home_score && prediction.predicted_et_away_score === match.et_away_score;
+            const isExactPens = prediction && match.status === 'FINISHED' && match.duration === 'PENALTY_SHOOTOUT' && match.ps_home_score !== null && match.ps_away_score !== null && prediction.predicted_ps_home_score === match.ps_home_score && prediction.predicted_ps_away_score === match.ps_away_score;
 
             return (
               <div key={match.id} style={{ position: 'relative', padding: '1rem', background: 'rgba(255,255,255,0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)' }}>
-                {isExactScore && (
-                  <div style={{ position: 'absolute', top: '-10px', right: '10px', background: 'var(--color-wimbledon-lime)', color: '#000', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', zIndex: 10, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    ★ Exact Score
-                  </div>
-                )}
+                <div style={{ position: 'absolute', top: '-10px', right: '10px', display: 'flex', gap: '0.5rem', zIndex: 10 }}>
+                  {isExactScore && (
+                    <div style={{ background: 'var(--color-wimbledon-lime)', color: '#000', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ★ Exact Score
+                    </div>
+                  )}
+                  {isExactET && (
+                    <div style={{ background: '#FFD700', color: '#000', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ★ Exact ET
+                    </div>
+                  )}
+                  {isExactPens && (
+                    <div style={{ background: '#FF8C00', color: '#000', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ★ Exact PENs
+                    </div>
+                  )}
+                </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                   <span>
                     {formatDay(match.kickoff_time)} - {getStage(match.kickoff_time)} • {new Date(match.kickoff_time).toLocaleTimeString('en-US', { timeZone: 'Africa/Casablanca', hour: '2-digit', minute: '2-digit' })} (Morocco Time)
