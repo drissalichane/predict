@@ -85,7 +85,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
     .sort((a, b) => roundOrder.indexOf(a) - roundOrder.indexOf(b))
 
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
-  const [selectedRound, setSelectedRound] = useState(rounds.includes('Round of 32') ? 'Round of 32' : rounds[0] || '')
+  const [selectedRound, setSelectedRound] = useState(rounds.includes('Round of 16') ? 'Round of 16' : rounds[0] || '')
   const [showPrevious, setShowPrevious] = useState(false)
 
   const filteredMatches = matches.filter(m => {
