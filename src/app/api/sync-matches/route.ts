@@ -237,6 +237,35 @@ export async function GET(request: NextRequest) {
             }
           }
 
+          // Late Qualification Bonus
+          if (ah === aa && ph !== pa && (fm.duration === 'EXTRA_TIME' || fm.duration === 'PENALTY_SHOOTOUT')) {
+            const pickedHome = ph > pa;
+            let qualifiedInET = false;
+            let qualifiedInPS = false;
+
+            if (fm.duration === 'EXTRA_TIME') {
+              const aetH = fm.et_home_score;
+              const aetA = fm.et_away_score;
+              if (aetH !== null && aetA !== null) {
+                if (pickedHome && aetH > aetA) qualifiedInET = true;
+                if (!pickedHome && aetH < aetA) qualifiedInET = true;
+              }
+            } else if (fm.duration === 'PENALTY_SHOOTOUT') {
+              const apsH = fm.ps_home_score;
+              const apsA = fm.ps_away_score;
+              if (apsH !== null && apsA !== null) {
+                if (pickedHome && apsH > apsA) qualifiedInPS = true;
+                if (!pickedHome && apsH < apsA) qualifiedInPS = true;
+              }
+            }
+
+            if (qualifiedInET) {
+              pointsEarned += parseFloat((2.5 * (pickedHome ? fm.odds_home : fm.odds_away)).toFixed(2));
+            } else if (qualifiedInPS) {
+              pointsEarned += parseFloat((2.0 * (pickedHome ? fm.odds_home : fm.odds_away)).toFixed(2));
+            }
+          }
+
           pointsEarned = parseFloat(pointsEarned.toFixed(2))
 
           // Update if changed
