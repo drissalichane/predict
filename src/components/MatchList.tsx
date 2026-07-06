@@ -260,6 +260,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                     {(match.duration === 'EXTRA_TIME' || match.duration === 'PENALTY_SHOOTOUT') && (
                       <div style={{ fontSize: '0.9rem', color: 'var(--color-wimbledon-lime)', fontWeight: 'bold' }}>
                         ET: {match.et_home_score ?? '-'} - {match.et_away_score ?? '-'}
+                        {match.et_home_score != null && match.et_away_score != null && ` (a.e.t. ${(match.home_score ?? 0) + match.et_home_score}-${(match.away_score ?? 0) + match.et_away_score})`}
                         {match.duration === 'PENALTY_SHOOTOUT' && ` | Pens: ${match.ps_home_score ?? '-'} - ${match.ps_away_score ?? '-'}`}
                       </div>
                     )}
@@ -268,6 +269,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                       {prediction?.predicted_et_home_score != null && (
                          <div style={{ marginTop: '0.25rem' }}>
                             ET: {prediction.predicted_et_home_score} - {prediction.predicted_et_away_score}
+                            {` (a.e.t. ${prediction.predicted_home_score + prediction.predicted_et_home_score}-${prediction.predicted_away_score + prediction.predicted_et_away_score!})`}
                             {prediction?.predicted_ps_home_score != null && ` | Pens: ${prediction.predicted_ps_home_score} - ${prediction.predicted_ps_away_score}`}
                          </div>
                       )}
@@ -348,6 +350,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
                       {!isEditing && prediction?.predicted_et_home_score != null && (
                          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '0.5rem', textAlign: 'center' }}>
                             ET: {prediction.predicted_et_home_score} - {prediction.predicted_et_away_score}
+                            {` (a.e.t. ${prediction.predicted_home_score + prediction.predicted_et_home_score}-${prediction.predicted_away_score + prediction.predicted_et_away_score!})`}
                             {prediction?.predicted_ps_home_score != null && ` | Pens: ${prediction.predicted_ps_home_score} - ${prediction.predicted_ps_away_score}`}
                          </div>
                       )}
@@ -668,6 +671,11 @@ const KnockoutEditModal = ({
                <input type="number" name="etAwayScore" value={etA} onChange={e => setEtA(e.target.value)} required={is90MinDraw} min="0" style={{ width: '80px', textAlign: 'center' }} disabled={!is90MinDraw} />
                <div style={{ flex: 1, textAlign: 'left' }}>{match.away_team}</div>
              </div>
+             {is90MinDraw && (
+               <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+                 Score a.e.t. (After Extra Time): <strong style={{ color: 'var(--color-wimbledon-lime)' }}>{parseInt(h || '0', 10) + parseInt(etH || '0', 10)} - {parseInt(a || '0', 10) + parseInt(etA || '0', 10)}</strong>
+               </div>
+             )}
           </div>
 
           <div style={{ 

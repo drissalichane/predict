@@ -266,6 +266,39 @@ export async function GET(request: NextRequest) {
             }
           }
 
+          // Early Qualification Bonus (Predicted draw in 90m, predicted winner in ET/PS, but actual match won in 90m by predicted winner)
+          if (ah !== null && aa !== null && ah !== aa && ph === pa) {
+            const actualHomeWon = ah > aa;
+            let predictedWinnerInET = false;
+            let predictedWinnerInPS = false;
+            let predictedHomeWon = false;
+
+            const petH = pred.predicted_et_home_score;
+            const petA = pred.predicted_et_away_score;
+            
+            if (petH !== null && petA !== null) {
+              if (petH !== petA) {
+                predictedWinnerInET = true;
+                predictedHomeWon = petH > petA;
+              } else {
+                const ppsH = pred.predicted_ps_home_score;
+                const ppsA = pred.predicted_ps_away_score;
+                if (ppsH !== null && ppsA !== null && ppsH !== ppsA) {
+                  predictedWinnerInPS = true;
+                  predictedHomeWon = ppsH > ppsA;
+                }
+              }
+            }
+
+            if ((predictedWinnerInET || predictedWinnerInPS) && actualHomeWon === predictedHomeWon) {
+              if (predictedWinnerInET) {
+                pointsEarned += parseFloat((2.5 * (predictedHomeWon ? fm.odds_home : fm.odds_away)).toFixed(2));
+              } else if (predictedWinnerInPS) {
+                pointsEarned += parseFloat((2.0 * (predictedHomeWon ? fm.odds_home : fm.odds_away)).toFixed(2));
+              }
+            }
+          }
+
           pointsEarned = parseFloat(pointsEarned.toFixed(2))
 
           // Update if changed
