@@ -260,7 +260,7 @@ export async function GET(request: NextRequest) {
             }
 
             if (qualifiedInET) {
-              pointsEarned += parseFloat((2.5 * (pickedHome ? fm.odds_home : fm.odds_away)).toFixed(2));
+              pointsEarned += parseFloat((2.0 * (pickedHome ? fm.odds_home : fm.odds_away)).toFixed(2));
             } else if (qualifiedInPS) {
               pointsEarned += parseFloat((2.0 * (pickedHome ? fm.odds_home : fm.odds_away)).toFixed(2));
             }
@@ -292,7 +292,7 @@ export async function GET(request: NextRequest) {
 
             if ((predictedWinnerInET || predictedWinnerInPS) && actualHomeWon === predictedHomeWon) {
               if (predictedWinnerInET) {
-                pointsEarned += parseFloat((2.5 * (predictedHomeWon ? fm.odds_home : fm.odds_away)).toFixed(2));
+                pointsEarned += parseFloat((2.0 * (predictedHomeWon ? fm.odds_home : fm.odds_away)).toFixed(2));
               } else if (predictedWinnerInPS) {
                 pointsEarned += parseFloat((2.0 * (predictedHomeWon ? fm.odds_home : fm.odds_away)).toFixed(2));
               }
