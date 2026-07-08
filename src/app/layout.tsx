@@ -31,7 +31,7 @@ export default function RootLayout({
         </NavbarWrapper>
         {children}
         <FloatingChatButton />
-        <FloatingConfettiButton />
+        {/* <FloatingConfettiButton /> */}
         <ScrollToTop />
         <Analytics />
       </body>

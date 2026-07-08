@@ -103,6 +103,26 @@ export async function GET(request: NextRequest) {
         }
       }
 
+      let psHomeScore = m.score?.penalties?.home ?? null;
+      let psAwayScore = m.score?.penalties?.away ?? null;
+
+      // Fix for API anomaly where penalties might show a draw but fullTime has the actual outcome
+      if (inferredDuration === 'PENALTY_SHOOTOUT' && psHomeScore !== null && psAwayScore !== null && psHomeScore === psAwayScore) {
+        const ftHome = m.score?.fullTime?.home;
+        const ftAway = m.score?.fullTime?.away;
+        if (ftHome !== undefined && ftAway !== undefined && ftHome !== ftAway) {
+          const cumPsHome = ftHome - (m.score?.regularTime?.home || 0) - (m.score?.extraTime?.home || 0);
+          const cumPsAway = ftAway - (m.score?.regularTime?.away || 0) - (m.score?.extraTime?.away || 0);
+          if (cumPsHome !== cumPsAway && cumPsHome >= 0 && cumPsAway >= 0) {
+            psHomeScore = cumPsHome;
+            psAwayScore = cumPsAway;
+          } else {
+            psHomeScore = ftHome;
+            psAwayScore = ftAway;
+          }
+        }
+      }
+
       return {
         id: m.id,
         home_team: homeName,
@@ -117,8 +137,8 @@ export async function GET(request: NextRequest) {
         duration: inferredDuration,
         et_home_score: m.score?.extraTime?.home ?? null,
         et_away_score: m.score?.extraTime?.away ?? null,
-        ps_home_score: m.score?.penalties?.home ?? null,
-        ps_away_score: m.score?.penalties?.away ?? null
+        ps_home_score: psHomeScore,
+        ps_away_score: psAwayScore
       }
     })
 
