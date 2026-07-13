@@ -66,6 +66,13 @@ export async function GET(request: NextRequest) {
       return t ? t.fifa_rank : 100 // default rank 100
     }
 
+    // Fetch existing matches to preserve manually updated odds
+    const { data: existingMatches } = await supabaseAdmin
+      .from('matches')
+      .select('id, odds_home, odds_draw, odds_away')
+      
+    const existingMatchesMap = new Map(existingMatches?.map((m: any) => [m.id, m]) || [])
+
     const matchDataList = matches.map((m: any) => {
       const homeName = m.homeTeam.name || 'TBD'
       const awayName = m.awayTeam.name || 'TBD'
@@ -77,9 +84,11 @@ export async function GET(request: NextRequest) {
       // Calculate probability based on rank difference
       const rankDiff = awayRank - homeRank // Positive means home is better
 
-      let oddsHome = Math.max(1.05, 2.8 - (rankDiff * 0.02)).toFixed(2)
-      let oddsAway = Math.max(1.05, 2.8 + (rankDiff * 0.02)).toFixed(2)
-      let oddsDraw = Math.max(2.0, 3.5 - (Math.abs(rankDiff) * 0.01)).toFixed(2)
+      const existingMatch = existingMatchesMap.get(m.id)
+
+      let oddsHome = existingMatch?.odds_home ?? Math.max(1.05, 2.8 - (rankDiff * 0.02)).toFixed(2)
+      let oddsAway = existingMatch?.odds_away ?? Math.max(1.05, 2.8 + (rankDiff * 0.02)).toFixed(2)
+      let oddsDraw = existingMatch?.odds_draw ?? Math.max(2.0, 3.5 - (Math.abs(rankDiff) * 0.01)).toFixed(2)
 
       let inferredDuration = m.score?.duration || 'REGULAR';
       if (m.score?.penalties?.home != null) {
