@@ -1,19 +1,18 @@
-import { login } from './actions'
+import { resetPassword } from './actions'
 import Link from 'next/link'
 
-export default async function LoginPage({
+export default async function ForgotPasswordPage({
   searchParams,
 }: {
-  searchParams: Promise<{ message?: string, redirect?: string }>
+  searchParams: Promise<{ message?: string }>
 }) {
   const resolvedSearchParams = await searchParams;
   return (
     <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '2rem' }} className="text-solid">Welcome</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '2rem' }} className="text-solid">Reset Password</h2>
         
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <input type="hidden" name="redirect_to" value={resolvedSearchParams?.redirect || '/dashboard'} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label htmlFor="username" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Username</label>
             <input 
@@ -33,7 +32,7 @@ export default async function LoginPage({
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label htmlFor="password" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Password</label>
+            <label htmlFor="password" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>New Password</label>
             <input 
               id="password" 
               name="password" 
@@ -51,15 +50,11 @@ export default async function LoginPage({
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-            <button formAction={login} className="btn btn-primary">Sign In</button>
+            <button formAction={resetPassword} className="btn btn-primary">Reset Password</button>
           </div>
           
           <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
-            <Link href="/forgot-password" style={{ color: 'var(--color-text-secondary)', textDecoration: 'underline' }}>Forgot Password?</Link>
-          </p>
-
-          <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
-            Don't have an account? <Link href="/signup" className="text-solid" style={{ textDecoration: 'underline' }}>Sign Up</Link>
+            Remembered your password? <Link href="/login" className="text-solid" style={{ textDecoration: 'underline' }}>Sign In</Link>
           </p>
           
           {resolvedSearchParams?.message && (
