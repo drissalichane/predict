@@ -5,6 +5,7 @@ import { submitPrediction } from '@/app/room/[id]/actions'
 import { getOtherPredictions } from '@/app/profile/actions'
 import TeamModal from './TeamModal'
 import OverallStandingsModal from './OverallStandingsModal'
+import KnockoutBracketModal from './KnockoutBracketModal'
 
 type Match = { id: number, kickoff_time: string, odds_home: number, odds_draw: number, odds_away: number, home_team: string, away_team: string, status?: string, home_score?: number | null, away_score?: number | null, duration?: string, et_home_score?: number | null, et_away_score?: number | null, ps_home_score?: number | null, ps_away_score?: number | null }
 type Prediction = { 
@@ -47,7 +48,7 @@ const getFlag = (team: string) => {
 }
 
 export default function MatchList({ matches, initialPredictions, roomId }: { matches: Match[], initialPredictions: Prediction[], roomId: string }) {
-  const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('round')
+  const [filterMode, setFilterMode] = useState<'day' | 'round' | 'all'>('all')
 
   const getStage = (dateString: string) => {
     // Subtract 6 hours to convert UTC to approx US ET so late matches fall on the correct day
@@ -119,6 +120,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
   const [showDailyPopup, setShowDailyPopup] = useState(false)
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null)
   const [showOverallStandings, setShowOverallStandings] = useState(false)
+  const [showBracketModal, setShowBracketModal] = useState(false)
 
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null)
   const [otherPredictions, setOtherPredictions] = useState<any[]>([])
@@ -174,7 +176,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
             <button type="button" className={`btn ${filterMode === 'round' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('round')}>By Round</button>
             <button type="button" className={`btn ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setFilterMode('all')}>All</button>
           </div>
-          <button type="button" className="btn btn-outline" style={{ padding: '0.5rem', fontSize: '0.8rem', marginLeft: 'auto' }} onClick={() => setShowOverallStandings(true)}>Standings</button>
+          <div style={{ display: 'flex', gap: '0.5rem', marginLeft: 'auto' }}>
+            <button type="button" className="btn btn-outline" style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setShowBracketModal(true)}>Bracket</button>
+            <button type="button" className="btn btn-outline" style={{ padding: '0.5rem', fontSize: '0.8rem' }} onClick={() => setShowOverallStandings(true)}>Standings</button>
+          </div>
         </div>
         <div style={{ marginTop: '1rem', padding: '0.5rem 1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border)', fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
           <strong style={{ color: 'var(--color-wimbledon-lime)' }}>Note:</strong> All primary score predictions are for the <strong>90-minute regulation time</strong>. If you predict a draw for a Knockout Stage match, you will be prompted to predict the Extra Time and Penalty scores.
@@ -501,6 +506,10 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
       {showOverallStandings && (
         <OverallStandingsModal matches={matches} onClose={() => setShowOverallStandings(false)} />
+      )}
+
+      {showBracketModal && (
+        <KnockoutBracketModal matches={matches} onClose={() => setShowBracketModal(false)} />
       )}
 
       {/* Modal for other predictions */}
