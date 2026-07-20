@@ -4,7 +4,8 @@ import Link from 'next/link'
 import MatchList from '@/components/MatchList'
 import LeaveRoomButton from '@/components/LeaveRoomButton'
 import GroupStageModal from '@/components/GroupStageModal'
-import KnockoutTransitionModal from '@/components/KnockoutTransitionModal'
+import OverallRankingModal from '@/components/OverallRankingModal'
+import TournamentWinnersModal from '@/components/TournamentWinnersModal'
 import { joinRoomById } from '@/app/dashboard/actions'
 
 export default async function RoomPage({
@@ -148,9 +149,24 @@ export default async function RoomPage({
     }
   }).sort((a, b) => b.points - a.points) || [];
 
+  const overallLeaderboard = members?.map((m: any) => {
+    const groupData = groupStageLeaderboard.find((g: any) => g.user_id === m.user_id)
+    const groupPoints = groupData?.points || 0
+    const groupExact = groupData?.exact || 0
+    const knockoutPoints = m.knockout_points || 0
+    const knockoutExact = m.knockout_exact_scores || 0
+    
+    return {
+      user_id: m.user_id,
+      display_name: m.users?.display_name || 'Anonymous',
+      points: parseFloat((groupPoints + knockoutPoints).toFixed(2)),
+      exact: groupExact + knockoutExact
+    }
+  }).sort((a, b) => b.points - a.points) || [];
+
   return (
     <main className="container main-content">
-      <KnockoutTransitionModal leaderboard={groupStageLeaderboard} />
+      <TournamentWinnersModal leaderboard={members || []} />
       {resolvedSearchParams?.welcome === 'true' && (
         <div style={{ padding: '1rem 1.5rem', background: 'rgba(163, 193, 56, 0.1)', border: '1px solid var(--color-wimbledon-lime)', borderRadius: 'var(--radius-md)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1rem', animation: 'fadeIn 0.5s ease-out' }}>
           <span style={{ fontSize: '1.5rem' }}>🎉</span>
@@ -181,9 +197,12 @@ export default async function RoomPage({
         
         {/* Leaderboard */}
         <div className="glass-panel glass-panel-sm sticky-panel">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
             <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0, lineHeight: 1.1 }}>Knockout Leaderboard</h2>
-            <GroupStageModal leaderboard={groupStageLeaderboard} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+              <GroupStageModal leaderboard={groupStageLeaderboard} />
+              <OverallRankingModal leaderboard={overallLeaderboard} />
+            </div>
           </div>
           
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

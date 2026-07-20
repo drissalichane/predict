@@ -87,7 +87,7 @@ export default function MatchList({ matches, initialPredictions, roomId }: { mat
 
   const [selectedDay, setSelectedDay] = useState(days[0] || '')
   const [selectedRound, setSelectedRound] = useState(rounds.includes('Third-Place Match') ? 'Third-Place Match' : rounds.includes('Semifinals') ? 'Semifinals' : rounds.includes('Round of 16') ? 'Round of 16' : rounds[0] || '')
-  const [showPrevious, setShowPrevious] = useState(false)
+  const [showPrevious, setShowPrevious] = useState(true)
 
   const filteredMatches = matches.filter(m => {
     const isFinished = m.status === 'FINISHED'
