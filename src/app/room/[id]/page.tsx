@@ -197,9 +197,9 @@ export default async function RoomPage({
         
         {/* Leaderboard */}
         <div className="glass-panel glass-panel-sm sticky-panel">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '0.5rem', flexWrap: 'wrap' }}>
             <h2 style={{ color: 'var(--color-wimbledon-lime)', margin: 0, lineHeight: 1.1 }}>Knockout Leaderboard</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <GroupStageModal leaderboard={groupStageLeaderboard} />
               <OverallRankingModal leaderboard={overallLeaderboard} />
             </div>

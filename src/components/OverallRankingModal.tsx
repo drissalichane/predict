@@ -15,7 +15,7 @@ export default function OverallRankingModal({ leaderboard }: { leaderboard: any[
     <>
       <button 
         className="btn btn-outline" 
-        style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', whiteSpace: 'nowrap', width: '100%' }}
+        style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}
         onClick={() => setIsOpen(true)}
       >
         View Overall Ranking
